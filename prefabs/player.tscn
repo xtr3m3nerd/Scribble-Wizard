@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://d2bc2u6jj35ye"]
+[gd_scene load_steps=5 format=3 uid="uid://d2bc2u6jj35ye"]
 
 [ext_resource type="Script" path="res://prefabs/player.gd" id="1_amscm"]
+[ext_resource type="PackedScene" uid="uid://cj13uvr8r1fd1" path="res://prefabs/projectile.tscn" id="2_0mkeo"]
 [ext_resource type="PackedScene" uid="uid://c5rfedoixoiq" path="res://prefabs/cast_zone.tscn" id="2_u0rwp"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u3wxe"]
@@ -9,6 +10,7 @@
 collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_amscm")
+projectile_prefab = ExtResource("2_0mkeo")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -21,6 +23,9 @@ collision_mask = 3
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="ProjectileSpawnPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 

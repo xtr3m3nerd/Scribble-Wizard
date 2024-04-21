@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://cj13uvr8r1fd1"]
+
+[ext_resource type="Script" path="res://prefabs/projectile.gd" id="1_6wln5"]
+[ext_resource type="PackedScene" uid="uid://dpedv4tgxcl4r" path="res://assets/models/fireball.blend" id="2_b3myl"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_n56lc"]
+radius = 0.15
+
+[node name="Projectile" type="CharacterBody3D"]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1_6wln5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_n56lc")
+
+[node name="Graphics" type="Node3D" parent="."]
+
+[node name="fireball" parent="Graphics" instance=ExtResource("2_b3myl")]
+transform = Transform3D(0.185, 0, 0, 0, 0.185, 0, 0, 0, 0.185, 0, 0, 0)
+
+[node name="DestroyTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="DestroyTimer" to="." method="queue_free"]

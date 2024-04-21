@@ -1,13 +1,17 @@
+class_name Player
 extends CharacterBody3D
 
+@export var projectile_prefab: PackedScene
 @onready var ray_cast_3d = $RayCast3D as RayCast3D
 @onready var animation_player = $AnimationPlayer as AnimationPlayer
 @onready var death_screen = $CanvasLayer/DeathScreen as Control
 @onready var restart_button = $CanvasLayer/DeathScreen/PanelContainer/MarginContainer/VBoxContainer/RestartButton as Button
 @onready var cooldown_timer = $CooldownTimer as Timer
+@onready var projectile_spawn_point = $ProjectileSpawnPoint as Marker3D
 
 const SPEED = 5.0
 const TURN_SPEED = 90.0
+const EYE_LEVEL = 1.0
 
 var can_shoot = true
 var dead = false
@@ -59,8 +63,13 @@ func shoot():
 	#animated_sprite_2d.play("shoot")
 	#shoot_sound.play()
 	cooldown_timer.start()
-	if ray_cast_3d.is_colliding() and ray_cast_3d.get_collider().has_method("kill"):
-		ray_cast_3d.get_collider().kill()
+	#if ray_cast_3d.is_colliding() and ray_cast_3d.get_collider().has_method("kill"):
+		#ray_cast_3d.get_collider().kill()
+	var projectile = projectile_prefab.instantiate() as Projectile
+	projectile.add_collision_exception_with(self)
+	get_tree().current_scene.add_child(projectile)
+	projectile.global_position = projectile_spawn_point.global_position
+	projectile.global_basis = global_basis
 
 func shoot_anim_done():
 	can_shoot = true

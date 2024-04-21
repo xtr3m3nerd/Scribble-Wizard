@@ -1,3 +1,4 @@
+class_name CastZone
 extends Control
 
 @onready var sub_viewport = $SubViewport as SubViewport
