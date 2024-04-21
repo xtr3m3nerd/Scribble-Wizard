@@ -7,7 +7,6 @@ extends CharacterBody3D
 func _physics_process(delta):
 	var dir = -transform.basis.z
 	var collision = move_and_collide(dir * move_speed * delta)
-	print(global_position)
 	if collision:
 		if collision.get_collider().has_method("kill"):
 			collision.get_collider().kill()

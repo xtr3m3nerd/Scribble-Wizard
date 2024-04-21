@@ -1,0 +1,225 @@
+[gd_scene load_steps=19 format=3 uid="uid://beco7krhnq4iv"]
+
+[ext_resource type="Texture2D" uid="uid://csxcv3rte7w1u" path="res://assets/images/circle32.png" id="1_nqgjx"]
+[ext_resource type="Script" path="res://prefabs/casting_charge.gd" id="2_23tw3"]
+
+[sub_resource type="Curve" id="Curve_w11ku"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.522581, 0.978022), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_7rimk"]
+curve = SubResource("Curve_w11ku")
+
+[sub_resource type="Gradient" id="Gradient_85sa7"]
+colors = PackedColorArray(0.333017, 0.537533, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_fv8sh"]
+gradient = SubResource("Gradient_85sa7")
+
+[sub_resource type="Gradient" id="Gradient_xh52d"]
+offsets = PackedFloat32Array(0, 0.677165)
+colors = PackedColorArray(0.43134, 0.43134, 0.43134, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_m261t"]
+gradient = SubResource("Gradient_xh52d")
+
+[sub_resource type="Curve" id="Curve_tspy8"]
+_data = [Vector2(0.0193548, 0), 0.0, 3.87113, 0, 0, Vector2(1, 0), -4.19741, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_r18ry"]
+curve = SubResource("Curve_tspy8")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_c6bix"]
+emission_shape = 2
+emission_sphere_radius = 1.0
+direction = Vector3(0, 0, 0)
+gravity = Vector3(0, 0, 0)
+scale_min = 0.1
+scale_max = 0.2
+scale_curve = SubResource("CurveTexture_r18ry")
+color_ramp = SubResource("GradientTexture1D_m261t")
+color_initial_ramp = SubResource("GradientTexture1D_fv8sh")
+alpha_curve = SubResource("CurveTexture_7rimk")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ffi0g"]
+transparency = 1
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_nqgjx")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_ns2ro"]
+material = SubResource("StandardMaterial3D_ffi0g")
+
+[sub_resource type="Animation" id="Animation_wctdq"]
+resource_name = "charging"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("GPUParticlesAttractorSphere3D:strength")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [1.0, 1.0, 128.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:process_material:color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_rbqqr"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("GPUParticlesAttractorSphere3D:strength")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:process_material:color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_l1afl"]
+resource_name = "shoot"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("GPUParticlesAttractorSphere3D:strength")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [128.0, -128.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_nmwmb"]
+resource_name = "fizzle"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("GPUParticlesAttractorSphere3D:strength")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [128.0, 1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:process_material:color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0rr38"]
+_data = {
+"RESET": SubResource("Animation_rbqqr"),
+"charging": SubResource("Animation_wctdq"),
+"fizzle": SubResource("Animation_nmwmb"),
+"shoot": SubResource("Animation_l1afl")
+}
+
+[node name="CastingCharge" type="GPUParticles3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.06468, -2.0017)
+amount = 128
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_c6bix")
+draw_pass_1 = SubResource("QuadMesh_ns2ro")
+script = ExtResource("2_23tw3")
+
+[node name="GPUParticlesAttractorSphere3D" type="GPUParticlesAttractorSphere3D" parent="."]
+radius = 1.5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_0rr38")
+}

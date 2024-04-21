@@ -1,6 +1,10 @@
 class_name CastZone
 extends Control
 
+signal start_cast
+signal bad_cast
+signal cast(type: String)
+
 @onready var sub_viewport = $SubViewport as SubViewport
 @onready var visuals = $Visuals as TextureRect
 @onready var brush = $SubViewport/Brush as Sprite2D
@@ -28,6 +32,7 @@ func _input(event):
 	if event.is_action_released("draw"):
 		drawing = false
 		brush.hide()
+		start_cast.emit()
 		await RenderingServer.frame_post_draw
 		var image = sub_viewport.get_texture().get_image()
 		var buffer = image.save_png_to_buffer()
@@ -60,7 +65,11 @@ func clear():
 func _on_request_completed(_result, _response_code, _headers, body, http_node):
 	var json = JSON.parse_string(body.get_string_from_utf8())
 	print(json)
+	var successful_cast = false
 	for glyph in json:
 		if glyph["type"] == "lightning":
-			$"../..".shoot(glyph["type"])
+			cast.emit(glyph["type"])
+			successful_cast = true
+	if not successful_cast:
+		bad_cast.emit()
 	http_node.queue_free()
