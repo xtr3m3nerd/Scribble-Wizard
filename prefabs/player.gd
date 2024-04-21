@@ -28,7 +28,7 @@ func _ready():
 	hurtable.dead.connect(blood_vision.dead)
 	hurtable.health_changed.connect(blood_vision.hurt)
 	hurtable.health_changed.connect(health_label.update_health)
-	health_label.update_health(hurtable.currentHealth, hurtable.maxHealth)
+	health_label.update_health(hurtable.current_health, hurtable.max_health)
 	
 	animation_player.animation_finished.connect(shoot_anim_done)
 	restart_button.button_up.connect(restart)

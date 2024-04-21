@@ -44,6 +44,7 @@ alpha_curve = SubResource("CurveTexture_7rimk")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ffi0g"]
 transparency = 1
+shading_mode = 0
 vertex_color_use_as_albedo = true
 albedo_texture = ExtResource("1_nqgjx")
 billboard_mode = 3
