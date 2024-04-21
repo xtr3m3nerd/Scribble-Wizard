@@ -34,8 +34,6 @@ func _process(_delta):
 	
 	if dead:
 		return
-	if Input.is_action_just_pressed("shoot"):
-		shoot()
 
 func _physics_process(delta):
 	if dead:
@@ -56,7 +54,8 @@ func _physics_process(delta):
 func restart():
 	get_tree().reload_current_scene()
 
-func shoot():
+func shoot(type):
+	# type input is "lightning", "fire", or "water" at the moment
 	if !can_shoot:
 		return
 	can_shoot = false
