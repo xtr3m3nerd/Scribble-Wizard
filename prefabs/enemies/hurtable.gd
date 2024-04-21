@@ -1,6 +1,6 @@
 class_name Hurtable
-
 extends Node
+
 signal dead
 signal health_changed (current_health:int , max_health:int)
 

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c2rnbe2k1a7cc"]
+
+[ext_resource type="Script" path="res://prefabs/enemies/attacks/range_attack_manager.gd" id="1_w5m40"]
+
+[node name="RangeAttackManager" type="Node3D"]
+script = ExtResource("1_w5m40")

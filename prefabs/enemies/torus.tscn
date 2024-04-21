@@ -1,8 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://bbond388nk6lb"]
+[gd_scene load_steps=15 format=3 uid="uid://bbond388nk6lb"]
 
 [ext_resource type="Script" path="res://prefabs/enemies/enemy.gd" id="1_qovbd"]
 [ext_resource type="PackedScene" uid="uid://c5ig11vdx3oin" path="res://prefabs/hurtable.tscn" id="2_0f8hr"]
-[ext_resource type="PackedScene" uid="uid://cqe7cl3e7njlu" path="res://prefabs/health_bar.tscn" id="3_liyih"]
+[ext_resource type="PackedScene" uid="uid://b10mevdllbqgv" path="res://prefabs/health_bar_3d.tscn" id="3_ebntx"]
+[ext_resource type="PackedScene" uid="uid://c2rnbe2k1a7cc" path="res://prefabs/enemies/attacks/range_attack_manager.tscn" id="4_c3p6m"]
+[ext_resource type="PackedScene" uid="uid://beco7krhnq4iv" path="res://prefabs/casting_charge.tscn" id="4_mluw7"]
+[ext_resource type="PackedScene" uid="uid://cj13uvr8r1fd1" path="res://prefabs/projectile.tscn" id="5_ednya"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d8ioy"]
 
@@ -37,7 +40,19 @@ tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector3(0, 0.125, 0)]
+"values": [Vector3(0, 1.5, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Graphics/CastingCharge:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
 }
 
 [sub_resource type="Animation" id="Animation_o38up"]
@@ -96,15 +111,55 @@ tracks/1/keys = {
 "values": [Vector3(0, 1.5, 0)]
 }
 
+[sub_resource type="Animation" id="Animation_drc6a"]
+resource_name = "attack"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Graphics/CastingCharge:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Graphics/MeshInstance3D:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1.5708, 0, 0)]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Graphics/CastingCharge")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"charge"
+}]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_gnbpx"]
 _data = {
 "RESET": SubResource("Animation_k42w1"),
+"attack": SubResource("Animation_drc6a"),
 "death": SubResource("Animation_o38up"),
 "idle": SubResource("Animation_jd3pd")
 }
-
-[sub_resource type="ViewportTexture" id="ViewportTexture_yhtmj"]
-viewport_path = NodePath("Graphics/SubViewport")
 
 [node name="Enemy" type="CharacterBody3D" groups=["enemies"]]
 collision_layer = 2
@@ -120,7 +175,7 @@ shape = SubResource("CapsuleShape3D_d8ioy")
 [node name="Graphics" type="Node3D" parent="."]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Graphics"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 material_override = SubResource("StandardMaterial3D_l8kev")
 mesh = SubResource("TorusMesh_0m1bb")
 
@@ -131,13 +186,20 @@ libraries = {
 }
 autoplay = "idle"
 
-[node name="Sprite3D" type="Sprite3D" parent="Graphics"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25656, 0)
-billboard = 2
-texture = SubResource("ViewportTexture_yhtmj")
+[node name="HealthBar3D" parent="Graphics" node_paths=PackedStringArray("hurtable") instance=ExtResource("3_ebntx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 0)
+hurtable = NodePath("../../Hurtable")
 
-[node name="SubViewport" type="SubViewport" parent="Graphics"]
-size = Vector2i(80, 20)
+[node name="CastingCharge" parent="Graphics" instance=ExtResource("4_mluw7")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 1.5, 0)
 
-[node name="HealthBar" parent="Graphics/SubViewport" node_paths=PackedStringArray("hurtable") instance=ExtResource("3_liyih")]
-hurtable = NodePath("../../../Hurtable")
+[node name="RangeAttackManager" parent="." instance=ExtResource("4_c3p6m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+projectile_prefab = ExtResource("5_ednya")
+attack_range = 15.0
+min_attack_range = 4.0
+attack_cooldown = 5.0
+
+[connection signal="charged" from="Graphics/CastingCharge" to="RangeAttackManager" method="perform_attack"]
+[connection signal="attack" from="RangeAttackManager" to="Graphics/CastingCharge" method="shoot"]
+[connection signal="start_attack" from="RangeAttackManager" to="Graphics/AnimationPlayer" method="play" binds= ["attack"]]

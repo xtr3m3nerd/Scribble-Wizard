@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://di7y1vq115mga"]
+
+[ext_resource type="Script" path="res://globals/global_settings.gd" id="1_lapcx"]
+
+[node name="GlobalSettings" type="Node"]
+script = ExtResource("1_lapcx")

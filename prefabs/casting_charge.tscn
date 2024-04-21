@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://beco7krhnq4iv"]
+[gd_scene load_steps=20 format=3 uid="uid://beco7krhnq4iv"]
 
 [ext_resource type="Texture2D" uid="uid://csxcv3rte7w1u" path="res://assets/images/circle32.png" id="1_nqgjx"]
 [ext_resource type="Script" path="res://prefabs/casting_charge.gd" id="2_23tw3"]
@@ -97,7 +97,6 @@ tracks/2/keys = {
 
 [sub_resource type="Animation" id="Animation_wctdq"]
 resource_name = "charging"
-length = 2.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -117,10 +116,10 @@ tracks/1/path = NodePath("GPUParticlesAttractorSphere3D:strength")
 tracks/1/interp = 2
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.2, 2),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [1.0, 1.0, 128.0]
+"values": [1.0, 128.0]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
@@ -129,10 +128,24 @@ tracks/2/path = NodePath(".:process_material:color")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Color(1, 1, 1, 1)]
+"values": [Color(1, 1, 1, 0.376471), Color(1, 1, 1, 1)]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"on_charged"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_nmwmb"]
@@ -176,6 +189,7 @@ tracks/2/keys = {
 
 [sub_resource type="Animation" id="Animation_l1afl"]
 resource_name = "shoot"
+length = 0.5
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -183,7 +197,7 @@ tracks/0/path = NodePath("GPUParticlesAttractorSphere3D:strength")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.2),
+"times": PackedFloat32Array(0, 0.1),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [128.0, -128.0]
@@ -195,16 +209,56 @@ tracks/1/path = NodePath(".:emitting")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 1),
+"times": PackedFloat32Array(0, 0.6),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
+}
+
+[sub_resource type="Animation" id="Animation_rinvj"]
+resource_name = "drawing"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("GPUParticlesAttractorSphere3D:strength")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:process_material:color")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0.376471)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_0rr38"]
 _data = {
 "RESET": SubResource("Animation_rbqqr"),
 "charging": SubResource("Animation_wctdq"),
+"drawing": SubResource("Animation_rinvj"),
 "fizzle": SubResource("Animation_nmwmb"),
 "shoot": SubResource("Animation_l1afl")
 }

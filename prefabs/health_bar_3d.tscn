@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://b10mevdllbqgv"]
+
+[ext_resource type="Script" path="res://prefabs/health_bar_3d.gd" id="1_b20ma"]
+[ext_resource type="PackedScene" uid="uid://cqe7cl3e7njlu" path="res://prefabs/health_bar.tscn" id="1_sfw2k"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_6q5ea"]
+viewport_path = NodePath("SubViewport")
+
+[node name="HealthBar3D" type="Node3D"]
+script = ExtResource("1_b20ma")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+billboard = 2
+texture = SubResource("ViewportTexture_6q5ea")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+size = Vector2i(80, 20)
+
+[node name="HealthBar" parent="SubViewport" instance=ExtResource("1_sfw2k")]

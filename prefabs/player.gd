@@ -33,9 +33,10 @@ func _ready():
 	animation_player.animation_finished.connect(shoot_anim_done)
 	restart_button.button_up.connect(restart)
 	death_screen.hide()
-	cast_zone.start_cast.connect(start_cast)
+	cast_zone.start_draw.connect(casting_charge.drawing)
+	cast_zone.start_cast.connect(casting_charge.charge)
 	cast_zone.cast.connect(shoot)
-	cast_zone.bad_cast.connect(bad_cast)
+	cast_zone.bad_cast.connect(casting_charge.fizzle)
 	casting_charge.emitting = false
 
 func _input(_event):
@@ -70,13 +71,6 @@ func _physics_process(delta):
 func restart():
 	get_tree().reload_current_scene()
 
-func start_cast():
-	casting_charge.animation_player.play("charging")
-
-func bad_cast():
-	casting_charge.animation_player.play("fizzle")
-	pass
-
 func shoot(glyph_list):
 	# type input is "lightning", "fire", or "water" at the moment
 	if !can_shoot:
@@ -87,8 +81,8 @@ func shoot(glyph_list):
 	cooldown_timer.start()
 	#if ray_cast_3d.is_colliding() and ray_cast_3d.get_collider().has_method("kill"):
 		#ray_cast_3d.get_collider().kill()
-		
-	casting_charge.animation_player.play("shoot")
+	
+	casting_charge.shoot()
 	for glyph in glyph_list:
 		match glyph:
 			"lightning":

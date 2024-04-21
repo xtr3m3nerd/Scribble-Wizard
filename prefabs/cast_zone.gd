@@ -1,6 +1,7 @@
 class_name CastZone
 extends Control
 
+signal start_draw
 signal start_cast
 signal bad_cast
 signal cast(types)
@@ -16,10 +17,6 @@ var continue_drawing = false
 
 var x_scale: float
 var y_scale: float
-
-var temp_filepath = "user://tmp.png"
-#var url = "http://192.168.1.138:3000/image"
-var url = "http://127.0.0.1:3000/image"
 
 func _ready():
 	sub_viewport.size = capture_size
@@ -38,6 +35,7 @@ func _input(event):
 	if event.is_action_pressed("draw"):
 		drawing = true
 		brush.show()
+		start_draw.emit()
 	if event.is_action_released("draw"):
 		drawing = false
 		brush.hide()
@@ -59,7 +57,7 @@ func send_drawing():
 	var http_request = HTTPRequest.new()
 	add_child(http_request)
 	http_request.request_completed.connect(_on_request_completed.bind(http_request))
-	http_request.request(url, headers, HTTPClient.METHOD_POST, json)
+	http_request.request(GlobalSettings.image_server_url, headers, HTTPClient.METHOD_POST, json)
 	clear()
 
 func _process(_delta):
