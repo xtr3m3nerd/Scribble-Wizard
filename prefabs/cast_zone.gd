@@ -12,6 +12,7 @@ signal cast(type: String)
 @export var capture_size: Vector2i = Vector2i(128,128)
 
 var drawing = false
+var continue_drawing = false
 
 var x_scale: float
 var y_scale: float
@@ -26,27 +27,39 @@ func _ready():
 	clear()
 	
 func _input(event):
+	if event.is_action_pressed("hold"):
+		continue_drawing = true
+	if event.is_action_released("hold"):
+		continue_drawing = false
+		if !drawing:
+			send_drawing()
+	
 	if event.is_action_pressed("draw"):
 		drawing = true
 		brush.show()
 	if event.is_action_released("draw"):
 		drawing = false
 		brush.hide()
-		start_cast.emit()
-		await RenderingServer.frame_post_draw
-		var image = sub_viewport.get_texture().get_image()
-		var buffer = image.save_png_to_buffer()
-		var image_base64 = Marshalls.raw_to_base64(buffer)
-		var data = {
-			"image": "data:image/png;base64," + image_base64
-		}
-		var json = JSON.stringify(data)
-		var headers = ["Content-Type: application/json"]
-		var http_request = HTTPRequest.new()
-		add_child(http_request)
-		http_request.request_completed.connect(_on_request_completed.bind(http_request))
-		http_request.request(url, headers, HTTPClient.METHOD_POST, json)
-		clear()
+		if !continue_drawing:
+			send_drawing()
+			
+
+func send_drawing():
+	start_cast.emit()
+	await RenderingServer.frame_post_draw
+	var image = sub_viewport.get_texture().get_image()
+	var buffer = image.save_png_to_buffer()
+	var image_base64 = Marshalls.raw_to_base64(buffer)
+	var data = {
+		"image": "data:image/png;base64," + image_base64
+	}
+	var json = JSON.stringify(data)
+	var headers = ["Content-Type: application/json"]
+	var http_request = HTTPRequest.new()
+	add_child(http_request)
+	http_request.request_completed.connect(_on_request_completed.bind(http_request))
+	http_request.request(url, headers, HTTPClient.METHOD_POST, json)
+	clear()
 
 func _process(_delta):
 	var mouse_pos = get_global_mouse_position()
@@ -65,11 +78,12 @@ func clear():
 func _on_request_completed(_result, _response_code, _headers, body, http_node):
 	var json = JSON.parse_string(body.get_string_from_utf8())
 	print(json)
-	var successful_cast = false
+	var glyph_list = []
 	for glyph in json:
-		if glyph["type"] == "lightning":
-			cast.emit(glyph["type"])
-			successful_cast = true
-	if not successful_cast:
+		glyph_list.append(glyph["type"])
+	print(glyph_list)
+	if glyph_list:
+		cast.emit(glyph_list)
+	else:
 		bad_cast.emit()
 	http_node.queue_free()

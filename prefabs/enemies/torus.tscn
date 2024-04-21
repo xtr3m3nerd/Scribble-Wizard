@@ -1,6 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://bbond388nk6lb"]
+[gd_scene load_steps=12 format=3 uid="uid://bbond388nk6lb"]
 
 [ext_resource type="Script" path="res://prefabs/enemies/enemy.gd" id="1_qovbd"]
+[ext_resource type="Script" path="res://prefabs/enemies/hurtable.gd" id="2_ukmpj"]
+[ext_resource type="Script" path="res://prefabs/enemies/HealthDisplay.gd" id="3_dt0kf"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d8ioy"]
 
@@ -101,10 +103,16 @@ _data = {
 "idle": SubResource("Animation_jd3pd")
 }
 
+[sub_resource type="ViewportTexture" id="ViewportTexture_yhtmj"]
+viewport_path = NodePath("Graphics/SubViewport")
+
 [node name="Enemy" type="CharacterBody3D"]
 collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_qovbd")
+
+[node name="Hurtable" type="Node3D" parent="."]
+script = ExtResource("2_ukmpj")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -123,3 +131,20 @@ libraries = {
 "": SubResource("AnimationLibrary_gnbpx")
 }
 autoplay = "idle"
+
+[node name="Sprite3D" type="Sprite3D" parent="Graphics"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25656, 0)
+billboard = 2
+texture = SubResource("ViewportTexture_yhtmj")
+
+[node name="SubViewport" type="SubViewport" parent="Graphics"]
+size = Vector2i(80, 20)
+
+[node name="ProgressBar" type="ProgressBar" parent="Graphics/SubViewport"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 100.0
+script = ExtResource("3_dt0kf")

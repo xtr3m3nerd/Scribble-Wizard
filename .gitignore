@@ -4,3 +4,4 @@ server/runs*
 server/best.pt
 server/yolov8n.pt
 server/training/data
+server/new_data
