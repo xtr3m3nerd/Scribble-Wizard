@@ -1,0 +1,37 @@
+[gd_scene load_steps=4 format=3 uid="uid://c5rfedoixoiq"]
+
+[ext_resource type="Script" path="res://prefabs/cast_zone.gd" id="1_mxnea"]
+[ext_resource type="Texture2D" uid="uid://csxcv3rte7w1u" path="res://assets/images/circle32.png" id="2_vh0dj"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_k14qn"]
+viewport_path = NodePath("SubViewport")
+
+[node name="CastZone" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_mxnea")
+
+[node name="Visuals" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("ViewportTexture_k14qn")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+disable_3d = true
+transparent_bg = true
+gui_disable_input = true
+size = Vector2i(128, 128)
+render_target_clear_mode = 1
+
+[node name="Brush" type="Sprite2D" parent="SubViewport"]
+position = Vector2(-100, -100)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_vh0dj")

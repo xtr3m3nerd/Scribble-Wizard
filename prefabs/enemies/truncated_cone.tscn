@@ -1,0 +1,125 @@
+[gd_scene load_steps=9 format=3 uid="uid://c2k3hlekkqv61"]
+
+[ext_resource type="Script" path="res://prefabs/enemies/enemy.gd" id="1_t6b4w"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d8ioy"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l8kev"]
+albedo_color = Color(0, 0.470588, 0, 1)
+
+[sub_resource type="TorusMesh" id="TorusMesh_0m1bb"]
+inner_radius = 0.25
+outer_radius = 0.5
+
+[sub_resource type="Animation" id="Animation_k42w1"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Graphics/MeshInstance3D:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Graphics/MeshInstance3D:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0.125, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_o38up"]
+resource_name = "death"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Graphics/MeshInstance3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0.125, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Graphics/MeshInstance3D:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_jd3pd"]
+resource_name = "idle"
+length = 6.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Graphics/MeshInstance3D:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2, 3, 4, 5, 6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(6.28319, 3.14159, 1.0472), Vector3(12.5664, 6.28319, 2.0944), Vector3(18.8496, 9.42478, 3.14159), Vector3(25.1327, 12.5664, 4.18879), Vector3(31.4159, 15.708, 5.23599), Vector3(37.6991, 18.8496, 6.28319)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Graphics/MeshInstance3D:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 1.5, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gnbpx"]
+_data = {
+"RESET": SubResource("Animation_k42w1"),
+"death": SubResource("Animation_o38up"),
+"idle": SubResource("Animation_jd3pd")
+}
+
+[node name="Enemy" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_t6b4w")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_d8ioy")
+
+[node name="Graphics" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Graphics"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0)
+material_override = SubResource("StandardMaterial3D_l8kev")
+mesh = SubResource("TorusMesh_0m1bb")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Graphics" groups=["enemy"]]
+root_node = NodePath("../..")
+libraries = {
+"": SubResource("AnimationLibrary_gnbpx")
+}
+autoplay = "idle"
