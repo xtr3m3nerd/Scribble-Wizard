@@ -18,7 +18,8 @@ var x_scale: float
 var y_scale: float
 
 var temp_filepath = "user://tmp.png"
-var url = "http://192.168.1.138:3000/image"
+#var url = "http://192.168.1.138:3000/image"
+var url = "http://127.0.0.1:3000/image"
 
 func _ready():
 	sub_viewport.size = capture_size
