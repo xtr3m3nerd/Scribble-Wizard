@@ -11,6 +11,8 @@ extends CharacterBody3D
 @export var attack_range = 2.0
 
 @onready var player : CharacterBody3D = get_tree().get_first_node_in_group("player")
+@onready var game_manager : GameManager = get_tree().get_first_node_in_group("game_manager")
+
 var dead = false
 
 func _ready():
@@ -19,6 +21,8 @@ func _ready():
 	await get_tree().create_timer(randf_range(0.0,1.0)).timeout
 	animation_player.stop()
 	animation_player.play("idle", 0.5)
+	if game_manager:
+		hurtable.dead.connect(game_manager.add_kill)
 	
 func _physics_process(_delta):
 	if dead:

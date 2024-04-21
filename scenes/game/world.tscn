@@ -1,6 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://x4fkf8presxf"]
+[gd_scene load_steps=14 format=3 uid="uid://x4fkf8presxf"]
 
 [ext_resource type="PackedScene" uid="uid://d2bc2u6jj35ye" path="res://prefabs/player.tscn" id="1_cdwsg"]
+[ext_resource type="PackedScene" uid="uid://cbg4ymu14wy1b" path="res://scenes/game/game_manager.tscn" id="1_xi1cu"]
 [ext_resource type="PackedScene" uid="uid://bxocdwqmsgtha" path="res://prefabs/Lightning.tscn" id="2_5f6p0"]
 [ext_resource type="PackedScene" uid="uid://bbond388nk6lb" path="res://prefabs/enemies/torus.tscn" id="2_ir3x7"]
 
@@ -35,6 +36,8 @@ size = Vector3(1.5, 3, 1.5)
 data = PackedVector3Array(-0.75, 1.5, 0.75, 0.75, 1.5, 0.75, -0.75, -1.5, 0.75, 0.75, 1.5, 0.75, 0.75, -1.5, 0.75, -0.75, -1.5, 0.75, 0.75, 1.5, -0.75, -0.75, 1.5, -0.75, 0.75, -1.5, -0.75, -0.75, 1.5, -0.75, -0.75, -1.5, -0.75, 0.75, -1.5, -0.75, 0.75, 1.5, 0.75, 0.75, 1.5, -0.75, 0.75, -1.5, 0.75, 0.75, 1.5, -0.75, 0.75, -1.5, -0.75, 0.75, -1.5, 0.75, -0.75, 1.5, -0.75, -0.75, 1.5, 0.75, -0.75, -1.5, -0.75, -0.75, 1.5, 0.75, -0.75, -1.5, 0.75, -0.75, -1.5, -0.75, 0.75, 1.5, 0.75, -0.75, 1.5, 0.75, 0.75, 1.5, -0.75, -0.75, 1.5, 0.75, -0.75, 1.5, -0.75, 0.75, 1.5, -0.75, -0.75, -1.5, 0.75, 0.75, -1.5, 0.75, -0.75, -1.5, -0.75, 0.75, -1.5, 0.75, 0.75, -1.5, -0.75, -0.75, -1.5, -0.75)
 
 [node name="World" type="Node3D"]
+
+[node name="GameManager" parent="." instance=ExtResource("1_xi1cu")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_rfnse")
