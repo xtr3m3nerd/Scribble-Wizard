@@ -3,7 +3,7 @@ extends Control
 
 signal start_cast
 signal bad_cast
-signal cast(type: String)
+signal cast(types)
 
 @onready var sub_viewport = $SubViewport as SubViewport
 @onready var visuals = $Visuals as TextureRect
@@ -77,7 +77,6 @@ func clear():
 
 func _on_request_completed(_result, _response_code, _headers, body, http_node):
 	var json = JSON.parse_string(body.get_string_from_utf8())
-	print(json)
 	var glyph_list = []
 	for glyph in json:
 		glyph_list.append(glyph["type"])

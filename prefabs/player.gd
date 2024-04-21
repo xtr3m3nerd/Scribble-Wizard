@@ -67,7 +67,7 @@ func bad_cast():
 	casting_charge.animation_player.play("fizzle")
 	pass
 
-func shoot(type: String):
+func shoot(types):
 	# type input is "lightning", "fire", or "water" at the moment
 	if !can_shoot:
 		return
@@ -79,19 +79,20 @@ func shoot(type: String):
 		#ray_cast_3d.get_collider().kill()
 		
 	casting_charge.animation_player.play("shoot")
-	match type:
-		"lightning":
-			var projectile = projectile_prefab.instantiate() as Projectile
-			projectile.add_collision_exception_with(self)
-			get_tree().current_scene.add_child(projectile)
-			projectile.global_position = projectile_spawn_point.global_position
-			projectile.global_basis = global_basis
-		"fire":
-			pass
-		"water":
-			pass
-		_:
-			printerr("Type: %s is not currently supported" % type)
+	for type in types:
+		match type:
+			"lightning":
+				var projectile = projectile_prefab.instantiate() as Projectile
+				projectile.add_collision_exception_with(self)
+				get_tree().current_scene.add_child(projectile)
+				projectile.global_position = projectile_spawn_point.global_position
+				projectile.global_basis = global_basis
+			"fire":
+				pass
+			"water":
+				pass
+			_:
+				printerr("Type: %s is not currently supported" % type)
 
 func shoot_anim_done():
 	can_shoot = true
