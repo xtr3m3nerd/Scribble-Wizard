@@ -10,5 +10,5 @@ script = ExtResource("1_yrtu0")
 [node name="Graphic" type="Node3D" parent="."]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Graphic"]
-transform = Transform3D(0.1, 0, 0, 0, -4.37114e-07, 0.1, 0, -10, -4.37114e-09, 0, 0, -2.50222)
+transform = Transform3D(0.1, 0, 0, 0, -4.37114e-08, 0.1, 0, -1, -4.37114e-09, 0, 0, -1)
 mesh = SubResource("CylinderMesh_moxm4")
