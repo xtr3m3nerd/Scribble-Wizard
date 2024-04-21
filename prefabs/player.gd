@@ -2,13 +2,14 @@ class_name Player
 extends CharacterBody3D
 
 @export var projectile_prefab: PackedScene
+@export var lightning_prefab: PackedScene
 @onready var ray_cast_3d = $RayCast3D as RayCast3D
 @onready var animation_player = $AnimationPlayer as AnimationPlayer
 @onready var death_screen = $CanvasLayer/DeathScreen as Control
 @onready var restart_button = $CanvasLayer/DeathScreen/PanelContainer/MarginContainer/VBoxContainer/RestartButton as Button
 @onready var cooldown_timer = $CooldownTimer as Timer
 @onready var projectile_spawn_point = $ProjectileSpawnPoint as Marker3D
-@onready var cast_zone = $CanvasLayer/CastZone as CastZone
+@onready var cast_zone = $CanvasLayer/CastZone
 @onready var casting_charge = $CastingCharge as CastingCharge
 
 const SPEED = 5.0
@@ -67,7 +68,7 @@ func bad_cast():
 	casting_charge.animation_player.play("fizzle")
 	pass
 
-func shoot(types):
+func shoot(glyph_list):
 	# type input is "lightning", "fire", or "water" at the moment
 	if !can_shoot:
 		return
@@ -79,20 +80,26 @@ func shoot(types):
 		#ray_cast_3d.get_collider().kill()
 		
 	casting_charge.animation_player.play("shoot")
-	for type in types:
-		match type:
+	for glyph in glyph_list:
+		match glyph:
 			"lightning":
+				if ray_cast_3d.is_colliding() and ray_cast_3d.get_collider().has_method("take_damage"):
+					var target = ray_cast_3d.get_collider()
+					target.take_damage(3)
+				var lightning = lightning_prefab.instantiate()
+				get_tree().current_scene.add_child(lightning)
+				lightning.global_position = projectile_spawn_point.global_position
+				lightning.global_basis = global_basis
+			"fire":
+				pass
+			"water":
 				var projectile = projectile_prefab.instantiate() as Projectile
 				projectile.add_collision_exception_with(self)
 				get_tree().current_scene.add_child(projectile)
 				projectile.global_position = projectile_spawn_point.global_position
 				projectile.global_basis = global_basis
-			"fire":
-				pass
-			"water":
-				pass
 			_:
-				printerr("Type: %s is not currently supported" % type)
+				printerr("Glyph: %s is not currently supported" % glyph)
 
 func shoot_anim_done():
 	can_shoot = true

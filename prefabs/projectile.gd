@@ -3,7 +3,7 @@ extends CharacterBody3D
 
 
 @export var move_speed = 20.0
-@export var damage = 1
+@export var damage = 5
 
 func _physics_process(delta):
 	var dir = -transform.basis.z

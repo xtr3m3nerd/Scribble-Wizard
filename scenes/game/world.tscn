@@ -1,6 +1,7 @@
-[gd_scene load_steps=12 format=3 uid="uid://x4fkf8presxf"]
+[gd_scene load_steps=13 format=3 uid="uid://x4fkf8presxf"]
 
 [ext_resource type="PackedScene" uid="uid://d2bc2u6jj35ye" path="res://prefabs/player.tscn" id="1_cdwsg"]
+[ext_resource type="PackedScene" uid="uid://bxocdwqmsgtha" path="res://prefabs/Lightning.tscn" id="2_5f6p0"]
 [ext_resource type="PackedScene" uid="uid://bbond388nk6lb" path="res://prefabs/enemies/torus.tscn" id="2_ir3x7"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xonup"]
@@ -125,6 +126,7 @@ shape = SubResource("ConcavePolygonShape3D_upqya")
 
 [node name="Player" parent="." instance=ExtResource("1_cdwsg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 9.07107)
+lightning_prefab = ExtResource("2_5f6p0")
 
 [node name="Enemy" parent="." instance=ExtResource("2_ir3x7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.97054)
