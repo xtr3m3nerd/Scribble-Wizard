@@ -106,7 +106,7 @@ _data = {
 [sub_resource type="ViewportTexture" id="ViewportTexture_yhtmj"]
 viewport_path = NodePath("Graphics/SubViewport")
 
-[node name="Enemy" type="CharacterBody3D"]
+[node name="Enemy" type="CharacterBody3D" groups=["enemies"]]
 collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_qovbd")

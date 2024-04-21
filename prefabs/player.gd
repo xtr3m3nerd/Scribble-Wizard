@@ -94,7 +94,29 @@ func shoot(glyph_list):
 			"lightning":
 				if ray_cast_3d.is_colliding() and ray_cast_3d.get_collider().has_method("take_damage"):
 					var target = ray_cast_3d.get_collider()
-					target.take_damage(3)
+					
+					var already_hit_targets = [target]
+					var enemies = get_tree().get_nodes_in_group("enemies")
+					for i in range(2): # number of bounces
+						var source_enemy = already_hit_targets[-1].collision_shape_3d.global_position
+						var closest_enemy = null
+						var closest_distance = 100000000000000
+						for enemy in enemies:
+							if !already_hit_targets.has(enemy) and !enemy.dead:
+								var distance_to_enemy = source_enemy.distance_to(enemy.global_position)
+								if distance_to_enemy < closest_distance:
+									closest_enemy = enemy
+									closest_distance = distance_to_enemy
+						if closest_enemy != null:
+							var lightning: Lightning = lightning_prefab.instantiate()
+							get_tree().current_scene.add_child(lightning)
+							lightning.global_position = closest_enemy.collision_shape_3d.global_position
+							lightning.look_at(already_hit_targets[-1].collision_shape_3d.global_position)
+							lightning.scale = Vector3(1,1,closest_distance/2)
+							already_hit_targets.append(closest_enemy)
+					for already_hit_target in already_hit_targets:
+						already_hit_target.take_damage(3)
+				
 				var lightning = lightning_prefab.instantiate()
 				get_tree().current_scene.add_child(lightning)
 				lightning.global_position = projectile_spawn_point.global_position
