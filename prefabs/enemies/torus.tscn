@@ -1,8 +1,8 @@
 [gd_scene load_steps=12 format=3 uid="uid://bbond388nk6lb"]
 
 [ext_resource type="Script" path="res://prefabs/enemies/enemy.gd" id="1_qovbd"]
-[ext_resource type="Script" path="res://prefabs/enemies/hurtable.gd" id="2_ukmpj"]
-[ext_resource type="Script" path="res://prefabs/enemies/HealthDisplay.gd" id="3_dt0kf"]
+[ext_resource type="PackedScene" uid="uid://c5ig11vdx3oin" path="res://prefabs/hurtable.tscn" id="2_0f8hr"]
+[ext_resource type="PackedScene" uid="uid://cqe7cl3e7njlu" path="res://prefabs/health_bar.tscn" id="3_liyih"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d8ioy"]
 
@@ -111,8 +111,7 @@ collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_qovbd")
 
-[node name="Hurtable" type="Node3D" parent="."]
-script = ExtResource("2_ukmpj")
+[node name="Hurtable" parent="." instance=ExtResource("2_0f8hr")]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -140,11 +139,5 @@ texture = SubResource("ViewportTexture_yhtmj")
 [node name="SubViewport" type="SubViewport" parent="Graphics"]
 size = Vector2i(80, 20)
 
-[node name="ProgressBar" type="ProgressBar" parent="Graphics/SubViewport"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-value = 100.0
-script = ExtResource("3_dt0kf")
+[node name="HealthBar" parent="Graphics/SubViewport" node_paths=PackedStringArray("hurtable") instance=ExtResource("3_liyih")]
+hurtable = NodePath("../../../Hurtable")

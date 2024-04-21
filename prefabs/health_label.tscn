@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://cycqpw2bwn0tg"]
+
+[ext_resource type="Script" path="res://prefabs/health_label.gd" id="1_bjign"]
+
+[node name="HealthLabel" type="Label"]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Health: %d"
+script = ExtResource("1_bjign")

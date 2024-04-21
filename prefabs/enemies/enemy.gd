@@ -5,10 +5,13 @@ extends CharacterBody3D
 @onready var graphics = $Graphics as Node3D
 @onready var animation_player = $Graphics/AnimationPlayer as AnimationPlayer
 @onready var hurtable = $Hurtable as Hurtable
-@onready var progress_bar = $Graphics/SubViewport/ProgressBar as HealthBar
 
 @export var move_speed = 2.0
 @export var attack_range = 2.0
+@export var damage_dealt: int = 1
+@export var attack_cooldown = 0.5
+var cooldown_timer: Timer
+var can_attack = true
 
 @onready var player : CharacterBody3D = get_tree().get_first_node_in_group("player")
 @onready var game_manager : GameManager = get_tree().get_first_node_in_group("game_manager")
@@ -16,8 +19,13 @@ extends CharacterBody3D
 var dead = false
 
 func _ready():
+	cooldown_timer = Timer.new()
+	cooldown_timer.wait_time = attack_cooldown
+	cooldown_timer.one_shot = true
+	cooldown_timer.timeout.connect(cooldown_finished)
+	add_child(cooldown_timer)
+	
 	hurtable.dead.connect(kill)
-	hurtable.health_changed.connect(progress_bar.updateHealth)
 	await get_tree().create_timer(randf_range(0.0,1.0)).timeout
 	animation_player.stop()
 	animation_player.play("idle", 0.5)
@@ -39,6 +47,8 @@ func _physics_process(_delta):
 	attempt_to_kill_player()
 
 func attempt_to_kill_player():
+	if !can_attack:
+		return
 	var dist_to_player = global_position.distance_to(player.global_position)
 	if dist_to_player > attack_range:
 		return
@@ -47,7 +57,9 @@ func attempt_to_kill_player():
 	var query = PhysicsRayQueryParameters3D.create(global_position+eye_line, player.global_position+eye_line, 1)
 	var result = get_world_3d().direct_space_state.intersect_ray(query)
 	if result.is_empty():
-		player.kill()
+		player.take_damage(damage_dealt)
+		can_attack = false
+		cooldown_timer.start()
 
 func kill():
 	dead = true
@@ -57,3 +69,6 @@ func kill():
 
 func take_damage(damage):
 	hurtable.take_damage(damage)
+
+func cooldown_finished():
+	can_attack = true

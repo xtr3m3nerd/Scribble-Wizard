@@ -1,10 +1,14 @@
-[gd_scene load_steps=7 format=3 uid="uid://d2bc2u6jj35ye"]
+[gd_scene load_steps=11 format=3 uid="uid://d2bc2u6jj35ye"]
 
 [ext_resource type="Script" path="res://prefabs/player.gd" id="1_amscm"]
 [ext_resource type="PackedScene" uid="uid://cj13uvr8r1fd1" path="res://prefabs/projectile.tscn" id="2_0mkeo"]
 [ext_resource type="PackedScene" uid="uid://c5rfedoixoiq" path="res://prefabs/cast_zone.tscn" id="2_u0rwp"]
+[ext_resource type="PackedScene" uid="uid://c5ig11vdx3oin" path="res://prefabs/hurtable.tscn" id="3_slg3q"]
 [ext_resource type="PackedScene" uid="uid://beco7krhnq4iv" path="res://prefabs/casting_charge.tscn" id="4_36qq3"]
 [ext_resource type="PackedScene" uid="uid://bhv7pajr0kgm2" path="res://prefabs/kill_counter.tscn" id="4_w2hkj"]
+[ext_resource type="PackedScene" uid="uid://cqe7cl3e7njlu" path="res://prefabs/health_bar.tscn" id="5_h7ldm"]
+[ext_resource type="PackedScene" uid="uid://cycqpw2bwn0tg" path="res://prefabs/health_label.tscn" id="6_i8mwl"]
+[ext_resource type="PackedScene" uid="uid://dx6h1xnkc4m63" path="res://prefabs/blood_vision.tscn" id="7_66ukh"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u3wxe"]
 
@@ -13,6 +17,8 @@ collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_amscm")
 projectile_prefab = ExtResource("2_0mkeo")
+
+[node name="Hurtable" parent="." instance=ExtResource("3_slg3q")]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -46,6 +52,22 @@ grow_vertical = 2
 color = Color(1, 1, 1, 0.176471)
 
 [node name="CastZone" parent="CanvasLayer" instance=ExtResource("2_u0rwp")]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer"]
+offset_right = 84.0
+offset_bottom = 50.0
+
+[node name="HealthBar" parent="CanvasLayer/VBoxContainer" node_paths=PackedStringArray("hurtable") instance=ExtResource("5_h7ldm")]
+layout_mode = 2
+hurtable = NodePath("../../../Hurtable")
+
+[node name="KillCounter" parent="CanvasLayer/VBoxContainer" instance=ExtResource("4_w2hkj")]
+layout_mode = 2
+
+[node name="HealthLabel" parent="CanvasLayer/VBoxContainer" instance=ExtResource("6_i8mwl")]
+layout_mode = 2
+
+[node name="BloodVision" parent="CanvasLayer" instance=ExtResource("7_66ukh")]
 
 [node name="DeathScreen" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -87,8 +109,6 @@ text = "You Died!"
 layout_mode = 2
 text = "Restart
 "
-
-[node name="KillCounter" parent="CanvasLayer" instance=ExtResource("4_w2hkj")]
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 

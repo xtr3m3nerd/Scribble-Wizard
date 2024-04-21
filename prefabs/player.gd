@@ -11,6 +11,9 @@ extends CharacterBody3D
 @onready var projectile_spawn_point = $ProjectileSpawnPoint as Marker3D
 @onready var cast_zone = $CanvasLayer/CastZone
 @onready var casting_charge = $CastingCharge as CastingCharge
+@onready var hurtable = $Hurtable as Hurtable
+@onready var health_label = $CanvasLayer/VBoxContainer/HealthLabel as HealthLabel
+@onready var blood_vision = $CanvasLayer/BloodVision
 
 const SPEED = 5.0
 const TURN_SPEED = 90.0
@@ -21,6 +24,12 @@ var dead = false
 
 func _ready():
 	#Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	hurtable.dead.connect(kill)
+	hurtable.dead.connect(blood_vision.dead)
+	hurtable.health_changed.connect(blood_vision.hurt)
+	hurtable.health_changed.connect(health_label.update_health)
+	health_label.update_health(hurtable.currentHealth, hurtable.maxHealth)
+	
 	animation_player.animation_finished.connect(shoot_anim_done)
 	restart_button.button_up.connect(restart)
 	death_screen.hide()
@@ -109,3 +118,6 @@ func kill():
 	death_screen.show()
 	#Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	
+
+func take_damage(damage):
+	hurtable.take_damage(damage)
