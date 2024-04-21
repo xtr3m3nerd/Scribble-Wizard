@@ -11,7 +11,7 @@ extends Node3D
 func set_hurtable(value):
 	if health_bar == null:
 		return
-	health_bar.hurtable = hurtable
+	health_bar.hurtable = value
 
 func _ready():
 	set_hurtable(hurtable)
