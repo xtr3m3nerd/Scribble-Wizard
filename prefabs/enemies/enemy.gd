@@ -4,6 +4,8 @@ extends CharacterBody3D
 @onready var collision_shape_3d = $CollisionShape3D
 @onready var graphics = $Graphics as Node3D
 @onready var animation_player = $Graphics/AnimationPlayer as AnimationPlayer
+@onready var hurtable = $Hurtable as Hurtable
+@onready var progress_bar = $Graphics/SubViewport/ProgressBar as HealthBar
 
 @export var move_speed = 2.0
 @export var attack_range = 2.0
@@ -12,6 +14,8 @@ extends CharacterBody3D
 var dead = false
 
 func _ready():
+	hurtable.dead.connect(kill)
+	hurtable.health_changed.connect(progress_bar.updateHealth)
 	await get_tree().create_timer(randf_range(0.0,1.0)).timeout
 	animation_player.stop()
 	animation_player.play("idle", 0.5)
@@ -46,3 +50,6 @@ func kill():
 	#$DeathSound.play()
 	animation_player.play("death", 0.5, 0.5)
 	collision_shape_3d.disabled = true
+
+func take_damage(damage):
+	hurtable.take_damage(damage)
