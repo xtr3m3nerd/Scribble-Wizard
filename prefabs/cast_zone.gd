@@ -40,7 +40,6 @@ func _input(event):
 		add_child(http_request)
 		http_request.request_completed.connect(_on_request_completed.bind(http_request))
 		http_request.request(url, headers, HTTPClient.METHOD_POST, json)
-		print(data)
 		clear()
 
 func _process(_delta):
@@ -60,4 +59,7 @@ func clear():
 func _on_request_completed(_result, _response_code, _headers, body, http_node):
 	var json = JSON.parse_string(body.get_string_from_utf8())
 	print(json)
+	for glyph in json:
+		if glyph["type"] == "lightning":
+			$"../..".shoot(glyph["type"])
 	http_node.queue_free()

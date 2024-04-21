@@ -1,2 +1,6 @@
 # Godot 4+ specific ignores
 .godot/
+server/runs*
+server/best.pt
+server/yolov8n.pt
+server/training/data
