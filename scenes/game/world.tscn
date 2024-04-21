@@ -1,9 +1,11 @@
-[gd_scene load_steps=14 format=3 uid="uid://x4fkf8presxf"]
+[gd_scene load_steps=16 format=3 uid="uid://x4fkf8presxf"]
 
 [ext_resource type="PackedScene" uid="uid://d2bc2u6jj35ye" path="res://prefabs/player.tscn" id="1_cdwsg"]
 [ext_resource type="PackedScene" uid="uid://cbg4ymu14wy1b" path="res://scenes/game/game_manager.tscn" id="1_xi1cu"]
 [ext_resource type="PackedScene" uid="uid://bxocdwqmsgtha" path="res://prefabs/Lightning.tscn" id="2_5f6p0"]
 [ext_resource type="PackedScene" uid="uid://bbond388nk6lb" path="res://prefabs/enemies/torus.tscn" id="2_ir3x7"]
+[ext_resource type="Script" path="res://scenes/game/MapGenerator.gd" id="5_ffw14"]
+[ext_resource type="PackedScene" uid="uid://bh0ln2nnyfq7l" path="res://prefabs/Wall.tscn" id="6_b8rw0"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xonup"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -59,6 +61,7 @@ shape = SubResource("ConcavePolygonShape3D_ggmbk")
 
 [node name="Block" type="MeshInstance3D" parent="Environment"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+visible = false
 material_override = SubResource("StandardMaterial3D_7yoce")
 mesh = SubResource("BoxMesh_scqrs")
 
@@ -148,3 +151,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.1728, 0, 3.48526)
 
 [node name="Enemy6" parent="." instance=ExtResource("2_ir3x7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.2074, -1.90735e-06, 9.50407)
+
+[node name="MapGenerator" type="Node3D" parent="."]
+script = ExtResource("5_ffw14")
+wall_prefab = ExtResource("6_b8rw0")
+enemy_prefab = ExtResource("2_ir3x7")

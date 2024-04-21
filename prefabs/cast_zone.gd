@@ -77,11 +77,14 @@ func clear():
 func _on_request_completed(_result, _response_code, _headers, body, http_node):
 	var json = JSON.parse_string(body.get_string_from_utf8())
 	var glyph_list = []
-	for glyph in json:
-		glyph_list.append(glyph["type"])
-	print(glyph_list)
-	if glyph_list:
-		cast.emit(glyph_list)
+	if json:
+		for glyph in json:
+			glyph_list.append(glyph["type"])
+		print(glyph_list)
+		if glyph_list:
+			cast.emit(glyph_list)
+		else:
+			bad_cast.emit()
 	else:
 		bad_cast.emit()
 	http_node.queue_free()
