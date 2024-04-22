@@ -14,6 +14,7 @@ extends CharacterBody3D
 @onready var hurtable = $Hurtable as Hurtable
 @onready var health_label = $CanvasLayer/VBoxContainer/HealthLabel as HealthLabel
 @onready var blood_vision = $CanvasLayer/BloodVision
+@onready var shield_vision = $CanvasLayer/ShieldVision
 
 const SPEED = 5.0
 const TURN_SPEED = 90.0
@@ -28,6 +29,7 @@ func _ready():
 	hurtable.dead.connect(blood_vision.dead)
 	hurtable.health_changed.connect(blood_vision.hurt)
 	hurtable.health_changed.connect(health_label.update_health)
+	hurtable.lost_shield.connect(shield_vision.lost_shield)
 	health_label.update_health(hurtable.current_health, hurtable.max_health)
 	
 	animation_player.animation_finished.connect(shoot_anim_done)
@@ -126,7 +128,8 @@ func shoot(glyph_list):
 				lightning.global_basis = global_basis
 				lightning.rotation_degrees.z = RandomNumberGenerator.new().randf_range(0, 360)
 			"fire":
-				pass
+				hurtable.receive_shield()
+				shield_vision.shielded()
 			"water":
 				var projectile = projectile_prefab.instantiate() as Projectile
 				projectile.add_collision_exception_with(self)
