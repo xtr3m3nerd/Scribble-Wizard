@@ -4,3 +4,5 @@
 
 [node name="GameManager" type="Node" groups=["game_manager"]]
 script = ExtResource("1_ytgoa")
+
+[connection signal="level_finished" from="." to="." method="start_next_level"]

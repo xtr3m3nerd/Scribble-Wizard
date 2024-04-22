@@ -1,5 +1,6 @@
-[gd_scene load_steps=14 format=3 uid="uid://3xuo2ywfijl2"]
+[gd_scene load_steps=15 format=3 uid="uid://3xuo2ywfijl2"]
 
+[ext_resource type="Script" path="res://prefabs/Stairs.gd" id="1_osml2"]
 [ext_resource type="Texture2D" uid="uid://gf1rxf5qj2jc" path="res://assets/images/wood.jpg" id="1_riqfy"]
 [ext_resource type="Texture2D" uid="uid://0cme4fjyqh3e" path="res://assets/images/floor.jpg" id="2_4mn4o"]
 
@@ -40,6 +41,7 @@ fill_from = Vector2(1, 0)
 fill_to = Vector2(0, 0)
 
 [node name="Stairs" type="Node3D"]
+script = ExtResource("1_osml2")
 
 [node name="Node3D" type="Node3D" parent="."]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -0.465307, 0, 0)

@@ -9,3 +9,6 @@ var kills: int = 0
 func add_kill():
 	kills += 1
 	kills_changed.emit(kills)
+
+func start_next_level():
+	print("Next Level")
