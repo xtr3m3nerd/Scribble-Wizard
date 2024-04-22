@@ -1,6 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://bh0ln2nnyfq7l"]
+[gd_scene load_steps=5 format=3 uid="uid://bh0ln2nnyfq7l"]
+
+[ext_resource type="Texture2D" uid="uid://dmabwqqs3yd4c" path="res://assets/images/wall.jpg" id="1_81pkn"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wmcb2"]
+albedo_texture = ExtResource("1_81pkn")
+albedo_texture_force_srgb = true
+uv1_scale = Vector3(3, 3, 3)
 
 [sub_resource type="BoxMesh" id="BoxMesh_gnvff"]
+material = SubResource("StandardMaterial3D_wmcb2")
 size = Vector3(2, 3, 2)
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_tofwf"]

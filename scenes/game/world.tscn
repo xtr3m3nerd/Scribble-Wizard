@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://x4fkf8presxf"]
+[gd_scene load_steps=9 format=3 uid="uid://x4fkf8presxf"]
 
 [ext_resource type="PackedScene" uid="uid://d2bc2u6jj35ye" path="res://prefabs/player.tscn" id="1_cdwsg"]
 [ext_resource type="PackedScene" uid="uid://cbg4ymu14wy1b" path="res://scenes/game/game_manager.tscn" id="1_xi1cu"]
 [ext_resource type="PackedScene" uid="uid://bxocdwqmsgtha" path="res://prefabs/Lightning.tscn" id="2_5f6p0"]
 [ext_resource type="PackedScene" uid="uid://dhm73xu31c0xn" path="res://prefabs/map_generator.tscn" id="4_tj3j4"]
+[ext_resource type="PackedScene" uid="uid://cefjerueldwtd" path="res://prefabs/Floor.tscn" id="5_74i3w"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xonup"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -33,3 +34,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1000, 0)
 lightning_prefab = ExtResource("2_5f6p0")
 
 [node name="MapGenerator" parent="." instance=ExtResource("4_tj3j4")]
+floor_prefab = ExtResource("5_74i3w")

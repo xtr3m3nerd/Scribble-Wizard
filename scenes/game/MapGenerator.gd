@@ -3,6 +3,7 @@ extends Node3D
 
 @export var wall_prefab: PackedScene
 @export var enemy_prefab: PackedScene
+@export var floor_prefab: PackedScene
 @onready var player: Player = get_tree().get_first_node_in_group("player")
 
 
@@ -48,6 +49,10 @@ func _ready():
 	
 	for x in range(columns):
 		for y in range(rows):
+			if map[x][y] != NOTHING:
+				var floor = floor_prefab.instantiate()
+				get_tree().current_scene.add_child.call_deferred(floor)
+				floor.set_deferred("global_position", Vector3(x*wall_scale, 0, y*wall_scale))
 			if map[x][y] == WALL or map[x][y] == CORNER:
 				var wall = wall_prefab.instantiate()
 				get_tree().current_scene.add_child.call_deferred(wall)
