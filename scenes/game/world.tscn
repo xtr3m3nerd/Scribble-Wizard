@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bxocdwqmsgtha" path="res://prefabs/Lightning.tscn" id="2_5f6p0"]
 [ext_resource type="PackedScene" uid="uid://dhm73xu31c0xn" path="res://prefabs/map_generator.tscn" id="4_tj3j4"]
 [ext_resource type="PackedScene" uid="uid://cefjerueldwtd" path="res://prefabs/Floor.tscn" id="5_74i3w"]
-[ext_resource type="PackedScene" uid="uid://dyncwxdnjssts" path="res://prefabs/enemies/pyramid.tscn" id="5_vv5j3"]
+[ext_resource type="PackedScene" uid="uid://cko6arxb16ach" path="res://prefabs/enemies/octohedron.tscn" id="5_o0ded"]
 [ext_resource type="PackedScene" uid="uid://3xuo2ywfijl2" path="res://prefabs/Stairs.tscn" id="6_i2c5g"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xonup"]
@@ -36,6 +36,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1000, 0)
 lightning_prefab = ExtResource("2_5f6p0")
 
 [node name="MapGenerator" parent="." instance=ExtResource("4_tj3j4")]
-enemy_prefab = ExtResource("5_vv5j3")
+enemy_prefab = ExtResource("5_o0ded")
 floor_prefab = ExtResource("5_74i3w")
 stairs_prefab = ExtResource("6_i2c5g")
