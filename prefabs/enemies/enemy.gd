@@ -28,14 +28,21 @@ func _physics_process(_delta):
 	if player == null:
 		return
 	
-	var dir = player.global_position - global_position
-	dir.y = 0.0
-	dir = dir.normalized()
-	
-	look_at(player.global_position)
-	
-	velocity = dir * move_speed
-	move_and_slide()
+	if can_see_player():
+		var dir = player.global_position - global_position
+		dir.y = 0.0
+		dir = dir.normalized()
+		
+		look_at(player.global_position)
+		
+		velocity = dir * move_speed
+		move_and_slide()
+
+func can_see_player():
+	var eye_line = Vector3.UP * 1.5
+	var query = PhysicsRayQueryParameters3D.create(global_position+eye_line, player.global_position+eye_line, 1)
+	var result = get_world_3d().direct_space_state.intersect_ray(query)
+	return result.is_empty()
 
 func kill():
 	dead = true
