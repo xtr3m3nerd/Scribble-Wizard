@@ -9,7 +9,7 @@ uv1_scale = Vector3(3, 3, 3)
 
 [sub_resource type="BoxMesh" id="BoxMesh_gnvff"]
 material = SubResource("StandardMaterial3D_wmcb2")
-size = Vector3(2, 3, 2)
+size = Vector3(2, 5, 2)
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_tofwf"]
 data = PackedVector3Array(-1, 1.5, 1, 1, 1.5, 1, -1, -1.5, 1, 1, 1.5, 1, 1, -1.5, 1, -1, -1.5, 1, 1, 1.5, -1, -1, 1.5, -1, 1, -1.5, -1, -1, 1.5, -1, -1, -1.5, -1, 1, -1.5, -1, 1, 1.5, 1, 1, 1.5, -1, 1, -1.5, 1, 1, 1.5, -1, 1, -1.5, -1, 1, -1.5, 1, -1, 1.5, -1, -1, 1.5, 1, -1, -1.5, -1, -1, 1.5, 1, -1, -1.5, 1, -1, -1.5, -1, 1, 1.5, 1, -1, 1.5, 1, 1, 1.5, -1, -1, 1.5, 1, -1, 1.5, -1, 1, 1.5, -1, -1, -1.5, 1, 1, -1.5, 1, -1, -1.5, -1, 1, -1.5, 1, 1, -1.5, -1, -1, -1.5, -1)
@@ -17,7 +17,7 @@ data = PackedVector3Array(-1, 1.5, 1, 1, 1.5, 1, -1, -1.5, 1, 1, 1.5, 1, 1, -1.5
 [node name="Wall" type="Node3D"]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.240938, 2.58938, 0.110476)
 mesh = SubResource("BoxMesh_gnvff")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D"]

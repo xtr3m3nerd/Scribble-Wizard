@@ -1,9 +1,21 @@
-[gd_scene load_steps=2 format=3 uid="uid://cefjerueldwtd"]
+[gd_scene load_steps=4 format=3 uid="uid://cefjerueldwtd"]
 
 [ext_resource type="Texture2D" uid="uid://0cme4fjyqh3e" path="res://assets/images/floor.jpg" id="1_ir1n5"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hn72q"]
+shading_mode = 0
+albedo_texture = ExtResource("1_ir1n5")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_g72rx"]
 
 [node name="Wall" type="Node3D"]
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
 texture = ExtResource("1_ir1n5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 5, 0)
+material_override = SubResource("StandardMaterial3D_hn72q")
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_g72rx")

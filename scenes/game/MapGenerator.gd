@@ -4,21 +4,25 @@ extends Node3D
 @export var wall_prefab: PackedScene
 @export var enemy_prefab: PackedScene
 @export var floor_prefab: PackedScene
+@export var stairs_prefab: PackedScene
 @onready var player: Player = get_tree().get_first_node_in_group("player")
 
 
 var map = []
-var rows = 50
-var columns = 50
 
 var current_room_count = 0
-var total_room_count = 10
+var total_room_count = 4
+
+var max_room_dim = 9
+var min_room_dim = 4
+
+var rows = int(max_room_dim*total_room_count)
+var columns = int(max_room_dim*total_room_count)
 
 var max_enemies_per_room = 3
 var min_enemies_per_room = 1
 
-var max_room_dim = 9
-var min_room_dim = 4
+
 
 var NOTHING = " "
 var WALL = "X"
@@ -26,33 +30,47 @@ var FLOOR = "."
 var DOOR = "D"
 var CORNER = "Y"
 var PLAYER = "P"
+var STAIRS = "S"
 
 var ENEMIES = ["1", "2", "3"]
 
 var wall_scale = 2
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	# Prepopulate map as walls
+func clear_map():
+	map = []
 	for x in range(rows):
 		map.append([])
 		for y in range(columns):
 			map[x].append(NOTHING)
+			
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	clear_map()
 	
 	# Randomly generate rooms
 	var tries = 0
-	while current_room_count < total_room_count and tries < 1000:
-		current_room_count = current_room_count + room(bool(current_room_count == 0))
+	while current_room_count < total_room_count:
+		current_room_count = current_room_count + room(bool(current_room_count == 0), bool(current_room_count == total_room_count -1))
 		tries = tries + 1
+		# If we can't generate a map in 10000 tries, simply reset since the existing rooms are in a wierd position.
+		if tries > total_room_count * 10000:
+			print("Failed to generate map")
+			clear_map()
+			current_room_count = 0
+			tries = 0
 	
 	draw_room()
 	
 	for x in range(columns):
 		for y in range(rows):
-			if map[x][y] != NOTHING:
+			if map[x][y] != NOTHING and map[x][y] != STAIRS:
 				var floor = floor_prefab.instantiate()
 				get_tree().current_scene.add_child.call_deferred(floor)
 				floor.set_deferred("global_position", Vector3(x*wall_scale, 0, y*wall_scale))
+			if map[x][y] == STAIRS:
+				var stairs = stairs_prefab.instantiate()
+				get_tree().current_scene.add_child.call_deferred(stairs)
+				stairs.set_deferred("global_position", Vector3(x*wall_scale, 0, y*wall_scale))
 			if map[x][y] == WALL or map[x][y] == CORNER:
 				var wall = wall_prefab.instantiate()
 				get_tree().current_scene.add_child.call_deferred(wall)
@@ -72,7 +90,7 @@ func draw_room():
 		map_str = map_str + "\n"
 	print(map_str)
 	
-func room(is_player_room):
+func room(is_player_room, is_last_room):
 	var rng = RandomNumberGenerator.new()
 	var width = rng.randf_range(min_room_dim, max_room_dim)
 	var height = rng.randf_range(min_room_dim, max_room_dim)
@@ -125,6 +143,13 @@ func room(is_player_room):
 			var y = rng.randf_range(position_y + 1, position_y + height - 1)
 			if map[x][y] == FLOOR:
 				map[x][y] = PLAYER
+				break
+	elif is_last_room:
+		while true:
+			var x = rng.randf_range(position_x + 1, position_x + width - 1)
+			var y = rng.randf_range(position_y + 1, position_y + height - 1)
+			if map[x][y] == FLOOR:
+				map[x][y] = STAIRS
 				break
 	else:
 		var enemy_count = rng.randf_range(min_enemies_per_room, max_enemies_per_room)

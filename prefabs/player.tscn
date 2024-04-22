@@ -71,7 +71,6 @@ layout_mode = 2
 [node name="BloodVision" parent="CanvasLayer" instance=ExtResource("7_66ukh")]
 
 [node name="ShieldVision" parent="CanvasLayer" instance=ExtResource("9_cwsst")]
-color = Color(1, 0, 0, 0)
 
 [node name="DeathScreen" type="Control" parent="CanvasLayer"]
 layout_mode = 3
