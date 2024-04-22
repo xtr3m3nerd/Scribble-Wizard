@@ -5,7 +5,7 @@ extends Node3D
 
 var found_stairs = false
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	if !found_stairs and player.global_position.distance_to(self.global_position) < 1:
 		found_stairs = true
 		game_manager.level_finished.emit()

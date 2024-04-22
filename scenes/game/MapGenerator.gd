@@ -1,6 +1,8 @@
 class_name MapGenerator
 extends Node3D
 
+signal level_generated
+
 @export var wall_prefab: PackedScene
 @export var floor_prefab: PackedScene
 @export var stairs_prefab: PackedScene
@@ -44,6 +46,8 @@ func generate_level(p_level_data: DungeonLevel):
 	while current_room_count < level_data.total_room_count:
 		current_room_count = current_room_count + room(bool(current_room_count == 0), bool(current_room_count == level_data.total_room_count -1))
 		tries = tries + 1
+		if tries % 100 == 0:
+			await get_tree().process_frame
 		# If we can't generate a map in 10000 tries, simply reset since the existing rooms are in a wierd position.
 		if tries > level_data.total_room_count * 10000:
 			print("Failed to generate map")
@@ -74,6 +78,7 @@ func generate_level(p_level_data: DungeonLevel):
 				var enemy = level_data.spawn_table[index].prefab.instantiate()
 				add_child.call_deferred(enemy)
 				enemy.set_deferred("global_position", Vector3(x*wall_scale, 0, y*wall_scale))
+	level_generated.emit()
 
 func draw_room():
 	var map_str = ""

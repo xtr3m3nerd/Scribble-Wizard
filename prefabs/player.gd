@@ -47,7 +47,7 @@ func _input(_event):
 
 func _process(_delta):
 	if Input.is_action_just_pressed("quit"):
-		get_tree().quit()
+		get_tree().change_scene_to_packed(SceneManager.main_menu_scene)
 	if Input.is_action_just_pressed("restart"):
 		restart()
 	

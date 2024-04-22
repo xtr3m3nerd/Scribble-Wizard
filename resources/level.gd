@@ -22,9 +22,9 @@ enum Rune {
 @export var boss_monster: PackedScene = null
 
 func rows() -> int:
-	return int(max_room_dim*total_room_count)
+	return int(max_room_dim*total_room_count*1.5)
 func columns() -> int:
-	return int(max_room_dim*total_room_count)
+	return int(max_room_dim*total_room_count*1.5)
 
 func pick_from_spawn_table(rng: RandomNumberGenerator) -> int:
 	var total_weight = 0.0

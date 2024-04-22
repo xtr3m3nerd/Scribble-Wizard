@@ -1,3 +1,11 @@
-[gd_scene format=3 uid="uid://dxkk2r3rnho6b"]
+[gd_scene load_steps=3 format=3 uid="uid://dxkk2r3rnho6b"]
+
+[ext_resource type="Script" path="res://scenes/menu/menu.gd" id="1_nhp3f"]
+[ext_resource type="PackedScene" uid="uid://m24oqakkakvk" path="res://scenes/menu/main_menu.tscn" id="2_f0avk"]
 
 [node name="Menu" type="Node"]
+script = ExtResource("1_nhp3f")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="MainMenu" parent="CanvasLayer" instance=ExtResource("2_f0avk")]

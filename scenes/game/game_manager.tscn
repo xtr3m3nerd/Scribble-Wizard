@@ -1,8 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://cbg4ymu14wy1b"]
+[gd_scene load_steps=4 format=3 uid="uid://cbg4ymu14wy1b"]
 
 [ext_resource type="Script" path="res://scenes/game/game_manager.gd" id="1_ytgoa"]
+[ext_resource type="PackedScene" uid="uid://cf5tfglhhfxbh" path="res://prefabs/victory_screen.tscn" id="2_yuf1p"]
+[ext_resource type="PackedScene" uid="uid://l6o6k7i1n2q3" path="res://prefabs/loading_screen.tscn" id="3_6pyo3"]
 
 [node name="GameManager" type="Node" groups=["game_manager"]]
 script = ExtResource("1_ytgoa")
+victory_screen_prefab = ExtResource("2_yuf1p")
+loading_screen_prefab = ExtResource("3_6pyo3")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 10
 
 [connection signal="level_finished" from="." to="." method="start_next_level"]

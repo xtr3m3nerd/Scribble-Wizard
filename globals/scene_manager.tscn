@@ -1,0 +1,10 @@
+[gd_scene load_steps=4 format=3 uid="uid://db5f68rorxger"]
+
+[ext_resource type="Script" path="res://globals/scene_manager.gd" id="1_v436c"]
+[ext_resource type="PackedScene" uid="uid://x4fkf8presxf" path="res://scenes/game/world.tscn" id="2_f4j8w"]
+[ext_resource type="PackedScene" uid="uid://dxkk2r3rnho6b" path="res://scenes/menu/menu.tscn" id="3_2tqos"]
+
+[node name="SceneManager" type="Node"]
+script = ExtResource("1_v436c")
+game_scene = ExtResource("2_f4j8w")
+main_menu_scene = ExtResource("3_2tqos")
