@@ -1,5 +1,11 @@
-<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.12.1/dist/ort.min.js"></script>
 <script>
+
+const script = document.createElement("script");
+script.src = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.12.1/dist/ort.min.js";
+script.async = true;
+document.head.appendChild(script);
+
+script.onload = function() {
 const onnxModelURL = 'https://raw.githubusercontent.com/xtr3m3nerd/Scribble-Wizard/main/server/best.onnx';
 // Profiling shows that wasm is faster than webgl for small neural networks such as the one for mnist.
 const sessionOption = { executionProviders: ['wasm', 'webgl'] };
@@ -8,31 +14,103 @@ async function createInferenceSession(onnxModelURL, sessionOption)
 {
     try {
         inferenceSession = await ort.InferenceSession.create(onnxModelURL, sessionOption);
+        var imgString = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAAvBJREFUeJzt3MFt6kAUheFjeGIFJdABe0QLVEBHiAKoATqgBgphxwpZLO23iaNkYpLYHmfmzvzfKmKBrpgzx4NjIQEAAAAAAAAAAAAAAAAAAAAA3tR1XS8Wi0XoObooQg+Qirqu6+bvoijMfK6T0AMgLALgQVVVVegZ+iIAHliqfBcByBwByJzZ6orFx9O/ZO9yQANkjgAM4O5+iwiAR9bqXyIAva1Wq1XoGXwwl9hYWD/8NWiAnqwuuOtf6AEscnf//X6/h5plqCRS/NdSqX+JS8BglhdfIgDZIwAdFEVRpHDz5yMC0IH7f//z+XwONYsvfAvoyfq1v0ED/JLlp36+QwB+KZUd7yIAmUsy1b6ldOPHRQNkjgD8wN39z+fzGWqWMSRTZWNJuf4lGuBbqd31a0MAXthsNhv3tdR2v8Ql4KW23Z9iAGiAX5pOp9PQM4whuUT7kMvul2iAL9oWOtXFl2iAL3La/RIN8MnxeDy6r6W8+BIN8Eluu1+iAd61Lf5kMvH++dRvfL9vXzwRJOnxeDzaXq+qqrper1dJWq/X67Isy/l8PvfxbGBd13UM7RJ8gBiE2pExBCD7S0BMdRxC9gHIHQHIHAHo4Xa73Ya+x3a73fqYZajgh5DQfjoDNAe15tTe9fT+6v1jOABKBEDSuL/zG/vNJe4DaLwFaVt8y78lgA52u92udpxOp1PouVzRVFFqYq/+Bt8CRtC2+Pv9fh9iFgTgVv/lcrmEnumV6CrJOivV3+ASkLlok2mRtd0v0QDetD08EvviSzSANxZ3v0QDeDGbzWbua8vlchlilq6iT6gFVne/RAOMwsriSwRgMOuPlJlJaowsV3+DBvCoLMsy9AxdmUprTFLY/RINkD0C4InF3S8RgF7c+j8cDodQswxlMrWhpfTTcTRAR9a/97sIwECWd79EALJnOr1/LaVrf4MGyBwByBwB6CmF+pcIQPYIQOYIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGDFfxN5DmZT8ecEAAAAAElFTkSuQmCC"
+
+        var canvas = document.createElement("canvas");
+        var ctx = canvas.getContext('2d');
+
+        var image = new Image()
+        image.onload = function() {
+        ctx.drawImage(image, 0, 0);
+        var imageData = ctx.getImageData(0, 0, image.width, image.height);
+        const pixels = imageData.data.filter(function(value, index) {
+            return (index + 1) % 4 != 0;
+        });
+        runMnistInference(pixels, inferenceSession);
+        console.log(pixels)
+        }
+        image.src = imgString;
+        document.body.appendChild(canvas);
+        console.log("Inference Session Created")
     } catch (e) {
         console.log(`failed to load ONNX model: ${e}.`);
     }
 }
 // Load model and create inference session once.
 createInferenceSession(onnxModelURL, sessionOption);
+
+function softmax(logitsArray)
+{
+    const numLogits = logitsArray.length;
+    var maxValue = Number.NEGATIVE_INFINITY;
+    for (let i = 0; i < numLogits; ++i)
+    {
+        if (logitsArray[i] > maxValue)
+        {
+            maxValue = logitsArray[i];
+        }
+    }
+    var expSum = 0;
+    for (let i = 0; i < numLogits; ++i)
+    {
+        const expValue = Math.exp(logitsArray[i] - maxValue);
+        expSum += expValue;
+    }
+    const logSumExp = maxValue + Math.log(expSum);
+    probabilities = Array(numLogits).fill(0);
+    for (let i = 0; i < numLogits; ++i)
+    {
+        probabilities[i] = Math.exp(logitsArray[i] - logSumExp);
+    }
+    return probabilities;
+}
+
+function argmax(probabilities)
+{
+    const numLogits = probabilities.length;
+    var maxValue = Number.NEGATIVE_INFINITY;
+    var arg = -1;
+    for (let i = 0; i < numLogits; ++i)
+    {
+        if (probabilities[i] > maxValue)
+        {
+            maxValue = probabilities[i];
+            arg = i;
+        }
+    }
+    return arg;
+}
+
 async function runMnistInference(inputDataArray, inferenceSession) {
     try {
         // create a new session and load the specific model.
         // the model in this example contains a single MatMul node
         // prepare inputs. a tensor need its corresponding TypedArray as data
         const inputData = Float32Array.from(inputDataArray);
-        const inputTensor = new ort.Tensor('float32', inputData, [1, 1, 28, 28]);
+        const inputTensor = new ort.Tensor('float32', inputData, [1, 3, 128, 128]);
+        console.log(inputTensor)
         // prepare feeds. use model input names as keys.
-        const feeds = { Input3: inputTensor };
+        const feeds = { images: inputTensor };
         // feed inputs and run
+        console.log("Inference")
         const results = await inferenceSession.run(feeds);
+        console.log("Done Inference")
+        console.log(results);
         // read from results
-        const outputData = results.Plus214_Output_0.data;
-        console.log(outputData);
+        const outputData = results.output0.data;
+        const probabilities = softmax(outputData)
+        console.log(probabilities)
+        const digit = argmax(probabilities)
+        console.log(digit);
+        console.log(probabilities[digit])
     } catch (e) {
         console.log(`failed to inference ONNX model: ${e}.`);
     }
 }
-var imgData = [];
-runMnistInference(imgData, inferenceSession);
+
+
+
 console.log("Done");
+}
 </script>
+
