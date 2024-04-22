@@ -14,6 +14,7 @@ extends CharacterBody3D
 @onready var hurtable = $Hurtable as Hurtable
 @onready var health_label = $CanvasLayer/VBoxContainer/HealthLabel as HealthLabel
 @onready var blood_vision = $CanvasLayer/BloodVision
+@onready var shield_vision = $CanvasLayer/ShieldVision
 
 const SPEED = 5.0
 const TURN_SPEED = 90.0
@@ -28,6 +29,7 @@ func _ready():
 	hurtable.dead.connect(blood_vision.dead)
 	hurtable.health_changed.connect(blood_vision.hurt)
 	hurtable.health_changed.connect(health_label.update_health)
+	hurtable.lost_shield.connect(shield_vision.lost_shield)
 	health_label.update_health(hurtable.current_health, hurtable.max_health)
 	
 	animation_player.animation_finished.connect(shoot_anim_done)
@@ -92,31 +94,42 @@ func shoot(glyph_list):
 					var already_hit_targets = [target]
 					var enemies = get_tree().get_nodes_in_group("enemies")
 					for i in range(2): # number of bounces
-						var source_enemy = already_hit_targets[-1].collision_shape_3d.global_position
+						var source_enemy_position = already_hit_targets[-1].collision_shape_3d.global_position
 						var closest_enemy = null
 						var closest_distance = 100000000000000
 						for enemy in enemies:
 							if !already_hit_targets.has(enemy) and !enemy.dead:
-								var distance_to_enemy = source_enemy.distance_to(enemy.global_position)
-								if distance_to_enemy < closest_distance:
-									closest_enemy = enemy
-									closest_distance = distance_to_enemy
+								var space_state = get_world_3d().direct_space_state
+								var params = PhysicsRayQueryParameters3D.new()
+								params.from = source_enemy_position
+								params.to = enemy.global_position
+								params.exclude = [enemy, already_hit_targets[-1]]
+								var result = space_state.intersect_ray(params)
+								if !result:
+									var distance_to_enemy = source_enemy_position.distance_to(enemy.global_position)
+									if distance_to_enemy < closest_distance:
+										closest_enemy = enemy
+										closest_distance = distance_to_enemy
 						if closest_enemy != null:
 							var lightning: Lightning = lightning_prefab.instantiate()
 							get_tree().current_scene.add_child(lightning)
 							lightning.global_position = closest_enemy.collision_shape_3d.global_position
 							lightning.look_at(already_hit_targets[-1].collision_shape_3d.global_position)
 							lightning.scale = Vector3(1,1,closest_distance/2)
+							lightning.rotation_degrees.z = RandomNumberGenerator.new().randf_range(0, 360)
 							already_hit_targets.append(closest_enemy)
+					print(len(already_hit_targets))
 					for already_hit_target in already_hit_targets:
 						already_hit_target.take_damage(3)
 				
 				var lightning = lightning_prefab.instantiate()
 				get_tree().current_scene.add_child(lightning)
-				lightning.global_position = projectile_spawn_point.global_position
+				lightning.global_position = projectile_spawn_point.global_position	
 				lightning.global_basis = global_basis
+				lightning.rotation_degrees.z = RandomNumberGenerator.new().randf_range(0, 360)
 			"fire":
-				pass
+				hurtable.receive_shield()
+				shield_vision.shielded()
 			"water":
 				var projectile = projectile_prefab.instantiate() as Projectile
 				projectile.add_collision_exception_with(self)

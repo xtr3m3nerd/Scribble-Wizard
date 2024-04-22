@@ -1,13 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://dx6h1xnkc4m63"]
+[gd_scene load_steps=5 format=3 uid="uid://c8kkyiw53rme8"]
 
-[ext_resource type="Script" path="res://prefabs/blood_vision.gd" id="1_rtoxb"]
+[ext_resource type="Script" path="res://prefabs/shield_vision.gd" id="1_ties3"]
 
 [sub_resource type="Animation" id="Animation_pp2c4"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("BloodVision:color")
+tracks/0/path = NodePath("ShieldVision:color")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -24,40 +24,23 @@ loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("BloodVision:color")
+tracks/0/path = NodePath("ShieldVision:color")
 tracks/0/interp = 2
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0, 1.5, 3),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Color(1, 0, 0, 0.513726), Color(1, 0, 0, 0.717647), Color(1, 0, 0, 0.513726)]
-}
-
-[sub_resource type="Animation" id="Animation_p6h3f"]
-resource_name = "hurt"
-length = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("BloodVision:color")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 0, 0, 0.45098), Color(1, 0, 0, 0)]
+"values": [Color(0.682353, 0.294118, 1, 0.121569), Color(0.298039, 0.494118, 1, 0.313726), Color(0.682353, 0.294118, 1, 0.121569)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_3mn8r"]
 _data = {
 "RESET": SubResource("Animation_pp2c4"),
-"dead": SubResource("Animation_q16m0"),
-"hurt": SubResource("Animation_p6h3f")
+"shielded": SubResource("Animation_q16m0")
 }
 
-[node name="BloodVision" type="ColorRect"]
+[node name="ShieldVision" type="ColorRect"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -65,7 +48,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 0, 0, 0)
-script = ExtResource("1_rtoxb")
+script = ExtResource("1_ties3")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../..")
