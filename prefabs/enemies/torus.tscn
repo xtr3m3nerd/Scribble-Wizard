@@ -200,6 +200,7 @@ attack_range = 15.0
 min_attack_range = 4.0
 attack_cooldown = 5.0
 
+[connection signal="dead" from="Hurtable" to="Graphics/CastingCharge" method="fizzle"]
 [connection signal="charged" from="Graphics/CastingCharge" to="RangeAttackManager" method="perform_attack"]
 [connection signal="attack" from="RangeAttackManager" to="Graphics/CastingCharge" method="shoot"]
 [connection signal="start_attack" from="RangeAttackManager" to="Graphics/AnimationPlayer" method="play" binds= ["attack"]]
