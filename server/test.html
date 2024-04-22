@@ -1,0 +1,38 @@
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.12.1/dist/ort.min.js"></script>
+<script>
+const onnxModelURL = 'https://raw.githubusercontent.com/xtr3m3nerd/Scribble-Wizard/main/server/best.onnx';
+// Profiling shows that wasm is faster than webgl for small neural networks such as the one for mnist.
+const sessionOption = { executionProviders: ['wasm', 'webgl'] };
+var inferenceSession;
+async function createInferenceSession(onnxModelURL, sessionOption) 
+{
+    try {
+        inferenceSession = await ort.InferenceSession.create(onnxModelURL, sessionOption);
+    } catch (e) {
+        console.log(`failed to load ONNX model: ${e}.`);
+    }
+}
+// Load model and create inference session once.
+createInferenceSession(onnxModelURL, sessionOption);
+async function runMnistInference(inputDataArray, inferenceSession) {
+    try {
+        // create a new session and load the specific model.
+        // the model in this example contains a single MatMul node
+        // prepare inputs. a tensor need its corresponding TypedArray as data
+        const inputData = Float32Array.from(inputDataArray);
+        const inputTensor = new ort.Tensor('float32', inputData, [1, 1, 28, 28]);
+        // prepare feeds. use model input names as keys.
+        const feeds = { Input3: inputTensor };
+        // feed inputs and run
+        const results = await inferenceSession.run(feeds);
+        // read from results
+        const outputData = results.Plus214_Output_0.data;
+        console.log(outputData);
+    } catch (e) {
+        console.log(`failed to inference ONNX model: ${e}.`);
+    }
+}
+var imgData = [];
+runMnistInference(imgData, inferenceSession);
+console.log("Done");
+</script>
