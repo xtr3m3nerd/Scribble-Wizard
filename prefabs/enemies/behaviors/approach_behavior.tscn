@@ -1,0 +1,30 @@
+[gd_scene load_steps=6 format=3 uid="uid://d0emu1ha0s4rg"]
+
+[ext_resource type="Script" path="res://prefabs/enemies/behaviors/approach_behavior.gd" id="1_6xujb"]
+[ext_resource type="Script" path="res://prefabs/enemies/states/state_idle.gd" id="2_pncl1"]
+[ext_resource type="Script" path="res://prefabs/enemies/states/state_roam.gd" id="3_ak3v5"]
+[ext_resource type="Script" path="res://prefabs/enemies/states/state_chase.gd" id="4_ngtbo"]
+[ext_resource type="Script" path="res://prefabs/enemies/states/state_dead.gd" id="6_qq0m4"]
+
+[node name="ApproachBehavior" type="Node"]
+script = ExtResource("1_6xujb")
+
+[node name="StateIdle" type="Node" parent="."]
+script = ExtResource("2_pncl1")
+state_name = "IDLE"
+
+[node name="StateRoam" type="Node" parent="."]
+script = ExtResource("3_ak3v5")
+state_name = "ROAM"
+
+[node name="StateChase" type="Node" parent="."]
+script = ExtResource("4_ngtbo")
+state_name = "CHASE"
+
+[node name="StateDead" type="Node" parent="."]
+script = ExtResource("6_qq0m4")
+state_name = "DEAD"
+
+[connection signal="idle_timeout" from="StateIdle" to="." method="_on_state_idle_idle_timeout"]
+[connection signal="roam_timeout" from="StateRoam" to="." method="_on_state_roam_roam_timeout"]
+[connection signal="unseen_timeout" from="StateChase" to="." method="_on_state_chase_unseen_timeout"]

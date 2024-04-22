@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bbond388nk6lb"]
+[gd_scene load_steps=17 format=3 uid="uid://bbond388nk6lb"]
 
 [ext_resource type="Script" path="res://prefabs/enemies/enemy.gd" id="1_qovbd"]
 [ext_resource type="PackedScene" uid="uid://c5ig11vdx3oin" path="res://prefabs/hurtable.tscn" id="2_0f8hr"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://c2rnbe2k1a7cc" path="res://prefabs/enemies/attacks/range_attack_manager.tscn" id="4_c3p6m"]
 [ext_resource type="PackedScene" uid="uid://beco7krhnq4iv" path="res://prefabs/casting_charge.tscn" id="4_mluw7"]
 [ext_resource type="PackedScene" uid="uid://cj13uvr8r1fd1" path="res://prefabs/projectile.tscn" id="5_ednya"]
+[ext_resource type="PackedScene" uid="uid://cuexqkfjtfmme" path="res://prefabs/enemies/behaviors/maintain_distance_behavior.tscn" id="7_5epqu"]
+[ext_resource type="PackedScene" uid="uid://cliimb2dvxmy0" path="res://prefabs/state_label.tscn" id="8_kgf7d"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d8ioy"]
 
@@ -161,7 +163,7 @@ _data = {
 "idle": SubResource("Animation_jd3pd")
 }
 
-[node name="Enemy" type="CharacterBody3D" groups=["enemies"]]
+[node name="Torus" type="CharacterBody3D" groups=["enemies"]]
 collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_qovbd")
@@ -196,11 +198,20 @@ transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 1.5, 0)
 [node name="RangeAttackManager" parent="." instance=ExtResource("4_c3p6m")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 projectile_prefab = ExtResource("5_ednya")
-attack_range = 15.0
+attack_range = 10.0
 min_attack_range = 4.0
 attack_cooldown = 5.0
+
+[node name="RoamFollowBehavior" parent="." instance=ExtResource("7_5epqu")]
+vision_range = 10.0
+
+[node name="StateLabel" parent="." instance=ExtResource("8_kgf7d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+billboard = 2
+text = "None"
 
 [connection signal="dead" from="Hurtable" to="Graphics/CastingCharge" method="fizzle"]
 [connection signal="charged" from="Graphics/CastingCharge" to="RangeAttackManager" method="perform_attack"]
 [connection signal="attack" from="RangeAttackManager" to="Graphics/CastingCharge" method="shoot"]
 [connection signal="start_attack" from="RangeAttackManager" to="Graphics/AnimationPlayer" method="play" binds= ["attack"]]
+[connection signal="state_changed" from="RoamFollowBehavior" to="StateLabel" method="_on_state_changed"]
