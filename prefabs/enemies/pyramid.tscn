@@ -1,0 +1,189 @@
+[gd_scene load_steps=14 format=3 uid="uid://dyncwxdnjssts"]
+
+[ext_resource type="Script" path="res://prefabs/enemies/enemy.gd" id="1_6twpg"]
+[ext_resource type="PackedScene" uid="uid://c5ig11vdx3oin" path="res://prefabs/hurtable.tscn" id="2_fbgss"]
+[ext_resource type="PackedScene" uid="uid://b10mevdllbqgv" path="res://prefabs/health_bar_3d.tscn" id="3_t0fiv"]
+[ext_resource type="PackedScene" uid="uid://0od5q0qphe8u" path="res://assets/imported_models/pyramid.tscn" id="4_rurm2"]
+[ext_resource type="Script" path="res://prefabs/enemies/attacks/melee_attack_manager.gd" id="5_hvk6j"]
+[ext_resource type="PackedScene" uid="uid://d0emu1ha0s4rg" path="res://prefabs/enemies/behaviors/approach_behavior.tscn" id="7_fpmds"]
+[ext_resource type="PackedScene" uid="uid://cliimb2dvxmy0" path="res://prefabs/state_label.tscn" id="8_gstt8"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_64kr8"]
+radius = 0.75
+
+[sub_resource type="Animation" id="Animation_k42w1"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Graphics/pyramid:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 1.5, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Graphics/pyramid:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_drc6a"]
+resource_name = "attack"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Graphics/pyramid:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 1.5, 0), Vector3(0, 1.01328, -0.0648966), Vector3(0, 1.0295, -0.470497), Vector3(0, 1.01328, -0.0648966), Vector3(0, 1.5, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Graphics/pyramid:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(-1.35116, 0, 0), Vector3(-1.35116, 0, 0), Vector3(0, 0, 0)]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeleeAttackManager")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"perform_attack"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_o38up"]
+resource_name = "death"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Graphics/pyramid:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 1.5, 0), Vector3(0, 1.02015, -0.147224), Vector3(-0.922, 0.333, -0.403)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Graphics/pyramid:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.4, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(-0.00256751, -0.533532, 0.815651), Vector3(-0.015708, -0.371755, 2.01586)]
+}
+
+[sub_resource type="Animation" id="Animation_jd3pd"]
+resource_name = "idle"
+length = 12.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Graphics/pyramid:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3, 6, 9, 12),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 1.5, 0), Vector3(0, 1.3, 0), Vector3(0, 1.5, 0), Vector3(0, 1.3, 0), Vector3(0, 1.5, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Graphics/pyramid:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 12),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 18.8496, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gnbpx"]
+_data = {
+"RESET": SubResource("Animation_k42w1"),
+"attack": SubResource("Animation_drc6a"),
+"death": SubResource("Animation_o38up"),
+"idle": SubResource("Animation_jd3pd")
+}
+
+[node name="Pyramid" type="CharacterBody3D" groups=["enemies"]]
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_6twpg")
+
+[node name="Hurtable" parent="." instance=ExtResource("2_fbgss")]
+current_health = 30
+max_health = 30
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_64kr8")
+
+[node name="Graphics" type="Node3D" parent="."]
+
+[node name="pyramid" parent="Graphics" instance=ExtResource("4_rurm2")]
+transform = Transform3D(0.75, 0, 0, 0, 0.75, 0, 0, 0, 0.75, 0, 1.5, 0)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Graphics" groups=["enemy"]]
+root_node = NodePath("../..")
+libraries = {
+"": SubResource("AnimationLibrary_gnbpx")
+}
+autoplay = "idle"
+
+[node name="HealthBar3D" parent="Graphics" node_paths=PackedStringArray("hurtable") instance=ExtResource("3_t0fiv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 0)
+hurtable = NodePath("../../Hurtable")
+
+[node name="MeleeAttackManager" type="Node3D" parent="."]
+script = ExtResource("5_hvk6j")
+attack_range = 3.0
+damage_dealt = 2
+attack_cooldown = 3.0
+
+[node name="StateLabel" parent="." instance=ExtResource("8_gstt8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+billboard = 2
+text = "None"
+
+[node name="ApproachBehavior" parent="." instance=ExtResource("7_fpmds")]
+
+[connection signal="start_attack" from="MeleeAttackManager" to="Graphics/AnimationPlayer" method="play" binds= ["attack"]]
+[connection signal="state_changed" from="ApproachBehavior" to="StateLabel" method="_on_state_changed"]
