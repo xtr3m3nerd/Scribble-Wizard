@@ -1,12 +1,101 @@
-[gd_scene load_steps=11 format=3 uid="uid://x4fkf8presxf"]
+[gd_scene load_steps=28 format=3 uid="uid://x4fkf8presxf"]
 
 [ext_resource type="PackedScene" uid="uid://d2bc2u6jj35ye" path="res://prefabs/player.tscn" id="1_cdwsg"]
 [ext_resource type="PackedScene" uid="uid://cbg4ymu14wy1b" path="res://scenes/game/game_manager.tscn" id="1_xi1cu"]
 [ext_resource type="PackedScene" uid="uid://bxocdwqmsgtha" path="res://prefabs/Lightning.tscn" id="2_5f6p0"]
+[ext_resource type="Script" path="res://resources/level.gd" id="2_ox34g"]
+[ext_resource type="PackedScene" uid="uid://buaco8r2aijox" path="res://prefabs/enemies/sphere.tscn" id="3_454d3"]
+[ext_resource type="Script" path="res://resources/spawn_weight.gd" id="4_484cb"]
 [ext_resource type="PackedScene" uid="uid://dhm73xu31c0xn" path="res://prefabs/map_generator.tscn" id="4_tj3j4"]
 [ext_resource type="PackedScene" uid="uid://cefjerueldwtd" path="res://prefabs/Floor.tscn" id="5_74i3w"]
+[ext_resource type="PackedScene" uid="uid://dyncwxdnjssts" path="res://prefabs/enemies/pyramid.tscn" id="5_kfu7w"]
 [ext_resource type="PackedScene" uid="uid://cko6arxb16ach" path="res://prefabs/enemies/octohedron.tscn" id="5_o0ded"]
 [ext_resource type="PackedScene" uid="uid://3xuo2ywfijl2" path="res://prefabs/Stairs.tscn" id="6_i2c5g"]
+[ext_resource type="PackedScene" uid="uid://bbond388nk6lb" path="res://prefabs/enemies/torus.tscn" id="7_2o5be"]
+
+[sub_resource type="Resource" id="Resource_yo7io"]
+script = ExtResource("4_484cb")
+weight = 4.0
+prefab = ExtResource("3_454d3")
+max_amt = -1
+
+[sub_resource type="Resource" id="Resource_np6xj"]
+script = ExtResource("4_484cb")
+weight = 1.0
+prefab = ExtResource("5_kfu7w")
+max_amt = -1
+
+[sub_resource type="Resource" id="Resource_sseep"]
+script = ExtResource("2_ox34g")
+shown_rune = 1
+total_room_count = 4
+max_room_dim = 9
+min_room_dim = 4
+max_enemies_per_room = 3
+min_enemies_per_room = 1
+spawn_table = Array[ExtResource("4_484cb")]([SubResource("Resource_yo7io"), SubResource("Resource_np6xj")])
+
+[sub_resource type="Resource" id="Resource_s0t5d"]
+script = ExtResource("4_484cb")
+weight = 5.0
+prefab = ExtResource("3_454d3")
+max_amt = -1
+
+[sub_resource type="Resource" id="Resource_4vdts"]
+script = ExtResource("4_484cb")
+weight = 3.0
+prefab = ExtResource("5_o0ded")
+max_amt = -1
+
+[sub_resource type="Resource" id="Resource_34g6s"]
+script = ExtResource("4_484cb")
+weight = 2.0
+prefab = ExtResource("5_kfu7w")
+max_amt = -1
+
+[sub_resource type="Resource" id="Resource_qymlr"]
+script = ExtResource("2_ox34g")
+shown_rune = 3
+total_room_count = 6
+max_room_dim = 10
+min_room_dim = 4
+max_enemies_per_room = 4
+min_enemies_per_room = 2
+spawn_table = Array[ExtResource("4_484cb")]([SubResource("Resource_s0t5d"), SubResource("Resource_4vdts"), SubResource("Resource_34g6s")])
+
+[sub_resource type="Resource" id="Resource_8q315"]
+script = ExtResource("4_484cb")
+weight = 3.0
+prefab = ExtResource("3_454d3")
+max_amt = -1
+
+[sub_resource type="Resource" id="Resource_3ybdn"]
+script = ExtResource("4_484cb")
+weight = 3.0
+prefab = ExtResource("5_o0ded")
+max_amt = -1
+
+[sub_resource type="Resource" id="Resource_5oooe"]
+script = ExtResource("4_484cb")
+weight = 2.0
+prefab = ExtResource("5_kfu7w")
+max_amt = -1
+
+[sub_resource type="Resource" id="Resource_ig7r0"]
+script = ExtResource("4_484cb")
+weight = 2.0
+prefab = ExtResource("7_2o5be")
+max_amt = -1
+
+[sub_resource type="Resource" id="Resource_7j80t"]
+script = ExtResource("2_ox34g")
+shown_rune = 2
+total_room_count = 8
+max_room_dim = 11
+min_room_dim = 4
+max_enemies_per_room = 5
+min_enemies_per_room = 2
+spawn_table = Array[ExtResource("4_484cb")]([SubResource("Resource_8q315"), SubResource("Resource_3ybdn"), SubResource("Resource_5oooe"), SubResource("Resource_ig7r0")])
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xonup"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -22,7 +111,17 @@ tonemap_mode = 2
 
 [node name="World" type="Node3D"]
 
-[node name="GameManager" parent="." instance=ExtResource("1_xi1cu")]
+[node name="Player" parent="." instance=ExtResource("1_cdwsg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1000, 0)
+lightning_prefab = ExtResource("2_5f6p0")
+
+[node name="MapGenerator" parent="." instance=ExtResource("4_tj3j4")]
+floor_prefab = ExtResource("5_74i3w")
+stairs_prefab = ExtResource("6_i2c5g")
+
+[node name="GameManager" parent="." node_paths=PackedStringArray("map_generator") instance=ExtResource("1_xi1cu")]
+map_generator = NodePath("../MapGenerator")
+levels = Array[ExtResource("2_ox34g")]([SubResource("Resource_sseep"), SubResource("Resource_qymlr"), SubResource("Resource_7j80t")])
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_rfnse")
@@ -30,12 +129,3 @@ environment = SubResource("Environment_rfnse")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
 shadow_enabled = true
-
-[node name="Player" parent="." instance=ExtResource("1_cdwsg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1000, 0)
-lightning_prefab = ExtResource("2_5f6p0")
-
-[node name="MapGenerator" parent="." instance=ExtResource("4_tj3j4")]
-enemy_prefab = ExtResource("5_o0ded")
-floor_prefab = ExtResource("5_74i3w")
-stairs_prefab = ExtResource("6_i2c5g")
