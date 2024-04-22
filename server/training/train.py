@@ -5,5 +5,5 @@ if __name__ == "__main__":
     results = model.train(
         data=f'training/data/data.yaml', 
         epochs=25,
-        imgsz=640
+        imgsz=128
     )

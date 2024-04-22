@@ -23,6 +23,7 @@ def get_img_from_base64(base64img):
 @app.route("/image", methods=['GET', 'POST'])
 def image(): 
     request_json = request.json
+    print(request_json["image"])
 
     base64_image_data = request_json["image"][22:]
     img = get_img_from_base64(base64_image_data)[:,:,:3]
