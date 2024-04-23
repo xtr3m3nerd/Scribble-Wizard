@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://cqe7cl3e7njlu" path="res://prefabs/health_bar.tscn" id="5_h7ldm"]
 [ext_resource type="PackedScene" uid="uid://cycqpw2bwn0tg" path="res://prefabs/health_label.tscn" id="6_i8mwl"]
 [ext_resource type="PackedScene" uid="uid://dx6h1xnkc4m63" path="res://prefabs/blood_vision.tscn" id="7_66ukh"]
-[ext_resource type="PackedScene" path="res://prefabs/shield_vision.tscn" id="9_cwsst"]
+[ext_resource type="PackedScene" uid="uid://c8kkyiw53rme8" path="res://prefabs/shield_vision.tscn" id="9_cwsst"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u3wxe"]
 
