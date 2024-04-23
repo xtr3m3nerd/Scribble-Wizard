@@ -31,20 +31,24 @@ async function createInferenceSession(onnxModelURL, sessionOption)
         //1337 + 7 -> 1
         var imgString6 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAAyFJREFUeJzt3DGO6jAUhWFDKNJQUcEu6FgJFRViLeyBjYBYCFtgAUgUFIlf8YTEWCE4se+1A//XzSSTWOOb49iBGAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB8s8VisbDWWs1zWmvtbrfbaZ4Tb9gXGuc7nU6nmOcbxTjIL3vtiNFoJP7/dDs+9JzjsOZAk0TKUAAZuN1uN2utXa/Xa+1zMwQEijEE+Bzj3dXPEDBwbscWRVFonp8ECBR6U9Z0ZbvHaBv7SQAEoQAi63Kn7rOv9PoCBfDjKAABoVft8+997g9CUQBCLpfLpW17nyKRWGlkFhCo7x16SAHEXH4mAQK1deT9fr/7Hmc2m83atk+n02mXdvkiASLomgLu/o/H41GWZel7HBJgQOq6rj/tU5Zl2bZ9MplM4rXoLwpAWIwbt6qqqhhtaUIBKHiN7Lal46ZikX42QAFE4HOVj8djr/+1eyyfISQEBRDJpyLoEuPPY2l8wogCEHI4HA7u77o8+tXofGOYBkblTs8+LfZIfoDEFwkgZL/f733H/ZRIgIiqqqpeO70tBUKuXBIgU+6Ybq21WmN5XxSAAumpXAgKQEFRFMVqtVo9f44V/zFkHU9D9ewkifiP/c0gsYcMv2w+n8+NMeZ6vV6N+f8F0rQteo8EECSRBHw3cCDaHgDlhAIYsBjJQgEokUiBGMekAIRoLACRAJnLfRXQGApgUDabzSb2MbOv0KGLOW2LPQU0hgQQ53ZablNCCkBY7p8JyLpx36pPCkjEvzEUgIqcZwMUQCLn8/nsu+/xeDxKtSPbyvxGfWNcKv6NIQGSymFGQAEoWi6Xy9RtcDEEKOv62hfJ+DeGBFDX9FVv7ZdDviIBEvBNAXe/uq7r2MVCASTiE+3S8W8MQ0A23M7ebrfbVG2BEuto2ya1GMQQkNC7iNd4QeQTQ0BmtJ8bkACJ+bxTQLIoSICMpFgapgAyJz0kUAAZ0/g0EQWQMY0hgQLIlNZsgALIkOYbRZgGJqY97XORAJnRXgiiAIDUmh4GAQAAAAAAAAAAAAAAAAAAAAAAAAAAAMBf/wAXqZw/OOf9CwAAAABJRU5ErkJggg==";
         //1343 + 7 -> 1
-        var imgString = imgString3;
+        var imgString = imgString6;
         // Our bounding box matching might be incorrectly using xyxy instead of xywh and/or center xy
 
         var canvas = document.createElement("canvas");
         canvas.width=128;
         canvas.height=128;
         var ctx = canvas.getContext('2d');
+        var canvas2 = document.createElement("canvas");
+        canvas2.width=128;
+        canvas2.height=128;
+        var ctx2 = canvas2.getContext('2d');
 
         var image = new Image(128, 128)
         image.onload = function() {
             ctx.filter = 'invert(1)'
             ctx.drawImage(image, 0, 0, image.width, image.height);
             var imageData = ctx.getImageData(0, 0, image.width, image.height);
-            console.log(imageData)
+            
             const pixels = imageData.data.filter(function(value, index) {
                 return (index + 1) % 4 != 1;
             });
@@ -62,14 +66,30 @@ async function createInferenceSession(onnxModelURL, sessionOption)
                     if(y > maxy) { maxy = y;}
                 }
             }
+            //ctx2.filter = 'invert(50)'
+            ctx2.drawImage(canvas, minx, miny, maxx-minx, maxy-miny, 0, 0, image.width, image.height)
             console.log(`${minx},${miny} to ${maxx},${maxy}`)
+
+            var imageData2 = ctx2.getImageData(0, 0, image.width, image.height);
+            const cropped_pixels = imageData2.data.filter(function(value, index) {
+                return (index + 1) % 4 != 1;
+            });
+            for(var i=0; i<cropped_pixels.length; i+=3){
+                if(cropped_pixels[i] + cropped_pixels[i+1] + cropped_pixels[i+2] > 10) {
+                    cropped_pixels[i] = 1
+                    cropped_pixels[i+1] = 1
+                    cropped_pixels[i+2] = 1
+                }
+            }
+            console.log(cropped_pixels)
             // Use this to find the closest bounding box
-            runMnistInference(pixels, inferenceSession, minx, miny, maxx, maxy);
+            runMnistInference(cropped_pixels, inferenceSession, minx, miny, maxx, maxy);
 
         }
         image.src = imgString;
         document.body.appendChild(image);
         document.body.appendChild(canvas);
+        document.body.appendChild(canvas2);
         console.log("Inference Session Created")
     } catch (e) {
         console.log(`failed to load ONNX model: ${e}.`);
@@ -85,7 +105,6 @@ async function runMnistInference(inputDataArray, inferenceSession, minx, miny, m
         // prepare inputs. a tensor need its corresponding TypedArray as data
         const inputData = Float32Array.from(inputDataArray);
         const inputTensor = new ort.Tensor('float32', inputData, [1, 3, 128, 128]);
-        console.log(inputTensor)
         // prepare feeds. use model input names as keys.
         const feeds = { images: inputTensor };
         // feed inputs and run
