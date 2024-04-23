@@ -1,10 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://dhm73xu31c0xn"]
+[gd_scene load_steps=3 format=3 uid="uid://dhm73xu31c0xn"]
 
 [ext_resource type="Script" path="res://scenes/game/MapGenerator.gd" id="1_g0vpt"]
 [ext_resource type="PackedScene" uid="uid://bh0ln2nnyfq7l" path="res://prefabs/Wall.tscn" id="2_w1gfj"]
-[ext_resource type="PackedScene" uid="uid://bbond388nk6lb" path="res://prefabs/enemies/torus.tscn" id="3_fvugc"]
 
 [node name="MapGenerator" type="Node3D"]
 script = ExtResource("1_g0vpt")
 wall_prefab = ExtResource("2_w1gfj")
-enemy_prefab = ExtResource("3_fvugc")
