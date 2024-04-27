@@ -1,12 +1,12 @@
 <script>
-
+function predict(imgString) {
 const script = document.createElement("script");
 script.src = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.12.1/dist/ort.min.js";
 script.async = true;
 document.head.appendChild(script);
 
 script.onload = function() {
-const onnxModelURL = 'https://raw.githubusercontent.com/xtr3m3nerd/Scribble-Wizard/main/server/best.onnx';
+const onnxModelURL = 'https://raw.githubusercontent.com/xtr3m3nerd/Scribble-Wizard/main/server/model.onnx';
 // Profiling shows that wasm is faster than webgl for small neural networks such as the one for mnist.
 const sessionOption = { executionProviders: ['wasm', 'webgl'] };
 var inferenceSession;
@@ -14,24 +14,74 @@ async function createInferenceSession(onnxModelURL, sessionOption)
 {
     try {
         inferenceSession = await ort.InferenceSession.create(onnxModelURL, sessionOption);
-        var imgString = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAAvBJREFUeJzt3MFt6kAUheFjeGIFJdABe0QLVEBHiAKoATqgBgphxwpZLO23iaNkYpLYHmfmzvzfKmKBrpgzx4NjIQEAAAAAAAAAAAAAAAAAAAAA3tR1XS8Wi0XoObooQg+Qirqu6+bvoijMfK6T0AMgLALgQVVVVegZ+iIAHliqfBcByBwByJzZ6orFx9O/ZO9yQANkjgAM4O5+iwiAR9bqXyIAva1Wq1XoGXwwl9hYWD/8NWiAnqwuuOtf6AEscnf//X6/h5plqCRS/NdSqX+JS8BglhdfIgDZIwAdFEVRpHDz5yMC0IH7f//z+XwONYsvfAvoyfq1v0ED/JLlp36+QwB+KZUd7yIAmUsy1b6ldOPHRQNkjgD8wN39z+fzGWqWMSRTZWNJuf4lGuBbqd31a0MAXthsNhv3tdR2v8Ql4KW23Z9iAGiAX5pOp9PQM4whuUT7kMvul2iAL9oWOtXFl2iAL3La/RIN8MnxeDy6r6W8+BIN8Eluu1+iAd61Lf5kMvH++dRvfL9vXzwRJOnxeDzaXq+qqrper1dJWq/X67Isy/l8PvfxbGBd13UM7RJ8gBiE2pExBCD7S0BMdRxC9gHIHQHIHAHo4Xa73Ya+x3a73fqYZajgh5DQfjoDNAe15tTe9fT+6v1jOABKBEDSuL/zG/vNJe4DaLwFaVt8y78lgA52u92udpxOp1PouVzRVFFqYq/+Bt8CRtC2+Pv9fh9iFgTgVv/lcrmEnumV6CrJOivV3+ASkLlok2mRtd0v0QDetD08EvviSzSANxZ3v0QDeDGbzWbua8vlchlilq6iT6gFVne/RAOMwsriSwRgMOuPlJlJaowsV3+DBvCoLMsy9AxdmUprTFLY/RINkD0C4InF3S8RgF7c+j8cDodQswxlMrWhpfTTcTRAR9a/97sIwECWd79EALJnOr1/LaVrf4MGyBwByBwB6CmF+pcIQPYIQOYIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGDFfxN5DmZT8ecEAAAAAElFTkSuQmCC"
 
         var canvas = document.createElement("canvas");
+        canvas.width=128;
+        canvas.height=128;
         var ctx = canvas.getContext('2d');
+        var canvas2 = document.createElement("canvas");
+        canvas2.width=128;
+        canvas2.height=128;
+        var ctx2 = canvas2.getContext('2d');
 
-        var image = new Image()
+        var image = new Image(128, 128)
         image.onload = function() {
-        ctx.drawImage(image, 0, 0);
-        var imageData = ctx.getImageData(0, 0, image.width, image.height);
-        const pixels = imageData.data.filter(function(value, index) {
-            return (index + 1) % 4 != 0;
-        });
-        runMnistInference(pixels, inferenceSession);
-        console.log(pixels)
+            ctx.filter = 'invert(1)'
+            ctx.drawImage(image, 0, 0, image.width, image.height);
+            var imageData = ctx.getImageData(0, 0, image.width, image.height);
+            
+            const pixels = imageData.data.filter(function(value, index) {
+                return (index + 1) % 4 != 1;
+            });
+            var minx = 129;
+            var maxx = 0;
+            var miny = 129;
+            var maxy = 0;
+            for(var i=0; i<pixels.length; i+=3) {
+                if(pixels[i] + pixels[i+1] + pixels[i+2] > 100) {
+                    var x = Math.floor((i%(128*3))/3)
+                    var y = Math.floor(i/(128*3))
+                    if(x < minx) { minx = x;}
+                    if(x > maxx) { maxx = x;}
+                    if(y < miny) { miny = y;}
+                    if(y > maxy) { maxy = y;}
+                }
+            }
+            //ctx2.filter = 'invert(50)'
+            ctx2.drawImage(canvas, minx-5, miny-5, maxx-minx+10, maxy-miny+10, 0, 0, image.width, image.height)
+
+            var imageData2 = ctx2.getImageData(0, 0, image.width, image.height);
+            var cropped_pixels = imageData2.data
+            for(var i=0; i<cropped_pixels.length; i+=4){
+                if(cropped_pixels[i] + cropped_pixels[i+1] + cropped_pixels[i+2] + cropped_pixels[i+3] > 100) {
+                    //cropped_pixels[i+2] = (1 - 0.485)/0.229
+                    //cropped_pixels[i+1] = (1 - 0.456)/0.224
+                    //cropped_pixels[i+0] = (1 - 0.406)/0.225
+                    cropped_pixels[i+3] = 2.5
+                    cropped_pixels[i+2] = 2.5
+                    cropped_pixels[i+1] = 2.5
+                    cropped_pixels[i+0] = 2.5
+                } else {
+                    //cropped_pixels[i+2] = (0 - 0.485)/0.229
+                    //cropped_pixels[i+1] = (0 - 0.456)/0.224
+                    //cropped_pixels[i+0] = (0 - 0.406)/0.225
+                    cropped_pixels[i+3] = -2.5
+                    cropped_pixels[i+2] = -2.5
+                    cropped_pixels[i+1] = -2.5
+                    cropped_pixels[i+0] = -2.5
+                }
+            }
+            cropped_pixels = cropped_pixels.filter(function(value, index) {
+                return (index + 1) % 4 != 1;
+            });
+            // Use this to find the closest bounding box
+            runMnistInference(cropped_pixels, inferenceSession, minx, miny, maxx, maxy);
+
         }
         image.src = imgString;
+        document.body.appendChild(image);
         document.body.appendChild(canvas);
-        console.log("Inference Session Created")
+        document.body.appendChild(canvas2);
     } catch (e) {
         console.log(`failed to load ONNX model: ${e}.`);
     }
@@ -39,78 +89,134 @@ async function createInferenceSession(onnxModelURL, sessionOption)
 // Load model and create inference session once.
 createInferenceSession(onnxModelURL, sessionOption);
 
-function softmax(logitsArray)
-{
-    const numLogits = logitsArray.length;
-    var maxValue = Number.NEGATIVE_INFINITY;
-    for (let i = 0; i < numLogits; ++i)
-    {
-        if (logitsArray[i] > maxValue)
-        {
-            maxValue = logitsArray[i];
-        }
-    }
-    var expSum = 0;
-    for (let i = 0; i < numLogits; ++i)
-    {
-        const expValue = Math.exp(logitsArray[i] - maxValue);
-        expSum += expValue;
-    }
-    const logSumExp = maxValue + Math.log(expSum);
-    probabilities = Array(numLogits).fill(0);
-    for (let i = 0; i < numLogits; ++i)
-    {
-        probabilities[i] = Math.exp(logitsArray[i] - logSumExp);
-    }
-    return probabilities;
-}
-
-function argmax(probabilities)
-{
-    const numLogits = probabilities.length;
-    var maxValue = Number.NEGATIVE_INFINITY;
-    var arg = -1;
-    for (let i = 0; i < numLogits; ++i)
-    {
-        if (probabilities[i] > maxValue)
-        {
-            maxValue = probabilities[i];
-            arg = i;
-        }
-    }
-    return arg;
-}
-
-async function runMnistInference(inputDataArray, inferenceSession) {
+async function runMnistInference(inputDataArray, inferenceSession, minx, miny, maxx, maxy) {
     try {
         // create a new session and load the specific model.
         // the model in this example contains a single MatMul node
         // prepare inputs. a tensor need its corresponding TypedArray as data
         const inputData = Float32Array.from(inputDataArray);
         const inputTensor = new ort.Tensor('float32', inputData, [1, 3, 128, 128]);
-        console.log(inputTensor)
         // prepare feeds. use model input names as keys.
         const feeds = { images: inputTensor };
         // feed inputs and run
-        console.log("Inference")
         const results = await inferenceSession.run(feeds);
-        console.log("Done Inference")
-        console.log(results);
+        console.log(results["output0"]["data"])
+        return results["output0"]["data"]
         // read from results
         const outputData = results.output0.data;
-        const probabilities = softmax(outputData)
-        console.log(probabilities)
-        const digit = argmax(probabilities)
-        console.log(digit);
-        console.log(probabilities[digit])
+        var d = [];
+        var c1 = [];
+        var c2 = [];
+        var c3 =[];
+        for(var i = 0; i<336; i++){
+            d.push([
+                outputData[i], 
+                outputData[i+336], 
+                outputData[i+(336*2)],
+                outputData[i+(336*3)],
+                outputData[i+(336*4)],
+                outputData[i+(336*5)],
+                outputData[i+(336*6)]
+            ])
+            cv1 = outputData[i+(336*4)]
+            cv2 = outputData[i+(336*5)]
+            cv3 = outputData[i+(336*6)]
+
+            if(cv1 > cv2 && cv1 > cv3) {
+                if(cv1 > 0.6){
+                    c1.push(cv1);
+                }
+            }
+            if(cv2 > cv1 && cv2 > cv3) {
+                if(cv2 > 0.6){
+                    c2.push(cv2);
+                }
+            }
+            if(cv3 > cv1 && cv3 > cv2) {
+                if(cv3 > 0.6){
+                    c3.push(cv3);
+                }
+            }
+        }
+        console.log(`
+            ${c1.reduce((a, b) => a + b) / c1.length} -
+            ${c2.reduce((a, b) => a + b) / c2.length} -
+            ${c3.reduce((a, b) => a + b) / c3.length}
+        `)
+        console.log(`
+            ${c1.length} -
+            ${c2.length} -
+            ${c3.length}
+        `)
+        //console.log(d);
+        var minerr = 1000000;
+        var bb = [];
+        for(var i=0; i<d.length; i++){
+            var b = d[i];
+            var x1 = b[0] - (b[2] / 2)
+            var x2 = b[0] + (b[2] / 2)
+            var y1 = b[1] - (b[3] / 2)
+            var y2 = b[1] + (b[3] / 2)
+            var err = Math.pow(Math.abs(x1 - minx),2) + 
+            Math.pow(Math.abs(y1 - miny),2) + 
+            Math.pow(Math.abs(x2 - maxx),2) + 
+            Math.pow(Math.abs(y2 - maxy),2);
+            
+            if(err < minerr) {
+                minerr = err;
+                bb = b;
+            }
+        }
+        console.log(`${minx} ${miny} - ${maxx} ${maxy}`)
+        console.log(`${minerr} - ${bb}`)
+        return d;
     } catch (e) {
         console.log(`failed to inference ONNX model: ${e}.`);
     }
 }
 
-
-
-console.log("Done");
 }
+}
+
+// Lightning
+var imgString1 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAAnZJREFUeJzt3EuO4jAUBVDzn7APloDYAUtiiSwAia0wCNCDbqRUhKqKJrYf8jmzkigcyTfPnwSnBAAAAAAAAAAAAEBWi8Vicf8nVxuTXF/M+4YdP5lMRu+v6dhfyGcRgKBylv0+AfgQy+VymeN7zQGCKjH+p6QChFSq/KckAB8h192fkgA0zxwgmFJj/4MK0DgBaJwABNJ1Xdf/ez6fz3O3aQ4QSOnxPyUVIKzz+Xwu0Y4KEEi/ApS4+1NSAcIoufvXJwCNE4CASpX/lAQghMPhcKjVtklgADWWfw8qQDAlOz8lAWieAFR2u91uNdsXgMpKl/whAQikRhgEoHECUFGt7d8+AQhivV6va7RrI6iiVzeAcmwYCUBFv3n8+9Mw8W4IDAGV/Gb8LzFHyP7OGa8rOTkUgEBqrAoMAQGsVqtVrSWhSWAlY3X4u5NAQ0AFr3T+sIPHrhSGgMBKPBtQAQLyRlDDvuv8Yfkf46djAhDIdrvdvvL56/V6zXUtZHR/YrPZbL77n8vlcul/fr/f78e4FsvACoal/H6/36fT6bfVONebw4aAAH7q/Kxt12qYv/7nTh5zlWAZWEHtF0H7VIDguq7r+uP/2DuBYZLIc7l/NqYCfBDHxTemxCNiAQhqNpvNSrRjDhDUs7vfENAwx8U3xHHxfOG4eLIxCQzGcfENO51Op9JtqgCBlFr69akAgTktvCHOCuYLp4VThAAEMDwr8Hg8Hku1bRUQgLOCGza8+50V3JjaL4gKQOMEIJAaewEmgRXVnPw9qACNE4DGCUDjBKBxAhDEbrfb1b4GKnic+FH7OgAAAAAAAAAAAAAAAAAAAIC4/gCUhvPRROjWVQAAAABJRU5ErkJggg==";
+// 1335
+var imgString2 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAAedJREFUeJzt3M2N4jAYBuAvy1IBlxQBfVAD/UAPnGgHcaUNDnTAXjaStZrZkMSjGdvPcwGTXymvPjt/RAAAAAAAAAAAAAAAAAAAAAAA87xer9fwmX5Pp/d93w/T+77vp26jy7e7LJUe3By6rhs9vr9ybpD5ch/8iIjL5XIZm0cF+CG+IgAR41VABWicADROAH649Xq9Hr4P5bz7KyLidDqdhunX6/U6df3GAJX5dyxhDMB/CUBFVqvVKm0fDofD2DK6gIpMLf8RKkDzBKBxAlCpd8p/hABUY+6lZAFonABU6N3yHyEAzROACiy5lSwAlXk+n88p87sSWIE5VwAHKkBlphz8CAFongAUbumzhAJQsPP5fE7bU8t/hEFg0ZYM/gYqQOMEoGC32+22dB26gIKlXcCc8h+hAhQr15tEAtA4AWicABRou91u0/bc/j/CILBIOc7/BypA4wSgMPv9fp+2H4/HY8n6dAGFyVn+I1SA5glA4wSgIMfj8Zi2l5b/CGOAooz1//f7/R4Rsdvtdu+u83eeXeO7eTWsUem/iKa/vbu8ABSq67ouxx1BASiU28F8yoshDdtsNpsp8zsLqIRHwhrmeYCG5L4ZRIE+OvcHAAAAAAAAAAAAAAAAAAAAAAAAAAAAyvQHb/ubaAJqM5oAAAAASUVORK5CYII=";
+// 1004
+
+// Water
+var imgString3 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAAelJREFUeJzt3MFtwjAUBuAGsQ4DMAMTMEkmYAF24MAm7MIRCS4BeukBhRBCascJ/r4bUcGW/Os9E5z+/AAAAAAAAAAAAAAAAAAAAAAAAAAA0Or+J/Y4RewB+Fx94YuiiLZOs1gfzDQIwAQcj8dj6jkwoOVyubzXnE6nU4yx7AFGqmkDGGMvoAWM1GKxWNSvDfGtgETqJf/V9cvlcgk5rhYwAm3lPnYr0AISe1fWr9frNeb4ApBQl54+n8/n9WtVVVWh5qAFJNQWgHqZj3V3UAVIpG3xh9ztC0AC2+1223R9t9vtiqIoZrPZ07rs9/v94+tQIdECEui7s4/RBlSAEei7kCGqgAAMrKm8dxXjVrAWMLD/lvHQbUAFyJwATEzoNiAAmROAhGKe9etKADInAJkTgMwJQOYEIHMCMDGhfyoWgMwJQOYEYEKcB/gyZVmWqefAwF49APLOZrPZ9H1vm+T3onPTt4w7Ffwl1uv1+vF1/bBnE88EfplPSvntdrvV/361Wq1CzUULSKDrqeBX4Qj5M/LTY0ek0bXMh24HKkAifRfSkbCM+Q8hX+TTxTyfz+co84jxoXTXpRXEPDsoACPwyWPioWkBI9C0yIfD4TCGU8MAAAAAAAAAAAAAAAAAAAAAAAAAAABAXL8pzBxZvpU1ywAAAABJRU5ErkJggg==";
+//1339
+var imgString4 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAAcpJREFUeJzt3ElywjAQBVBPnIKb+YTcxJzIrCDZhAq4GExitQR+by0iiv5uC0W4qgAAAAAAAAAAAAAAAAAAAAAAAACAR75+RMzVREzCfFGFP6sjJ+O+e4Wv6zppjXSAAjy66ne73S7l3DpAZk3TNMfj8fhsXKpOoANkNAzDMKf4KekAGb264EvRBXSATB4VP/XC72quqIn4Nbf4t8YtHQ4doBCHw+EwLe44jmPqeXWAYK9+30/dBXSAAjwqqI2gDxJxT3+VAGS02Ww2c8ZNQ7Lk/wusAYL89+qfvn6pzqEDZNJ1XZf7PVSVAGSTewv4TAACNE1z9TnnXvhdEoAApVzttwjAG9rv9/ul/lYxreiTLbGC9y3gQ0zXA39hK/iNRR/6fEYA3kDK0AjAygnAyglA4VKt/s8EYOUEoGCpr/6qEoDVE4AC9X3fR+0X2AoOcFnMOW088uiYDhDs2ZUdvVMoAAXJ8RNxAcjgVqFzPR/AGiDIX1u73wWsWMTRMQEIcjqdTq+Mjzo36BYQaO5tIPLQqA4QaLvdbp+NiT4xrAMEK+XBEGQ2juN4fiBk27Zt7vcDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAECobzcssoa/z7OhAAAAAElFTkSuQmCC";
+//996
+
+// Fire
+var imgString5 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAAjdJREFUeJzt3dtt6kAUBVAbKIM26IJGqIBOKIEeXAIl8cFwP66QEAIS4MyDzFp/SZA9YrbPPGw5wwAAAAAAAAAAAAAAAAAAAAAAQKPG2g1gGM7n8/m3nx3HMbTPBKCSVzr9VmQIZlEH6tU0TdP5iZRSuvf7T865WCwWUe1XAT70aWe+K6oKqACdE4DOhY0lvO835TzXUCMAlUQv594lAIFa6dRXmAN0TgAC1VoSfkIAOicAnROADx2Px2Ppc37jZPNPu97jX61Wq9zniDyuJAW47ZToKzTn8Q0BnROAzglAgG+elAlABjk3hKLDJgCN226325zH/9rS1ZpcM/XcKwwVIMhms9lc/zybzb7iu1UBAkVfrffmEipAx3KsNgSgcwLQOQEIFFmic8/+LwSgcwKQ0Tc8IiYADVoul8tS57IPECxi7C41/g+DCtA9AeicAAQLf4NH5mcNBKAxpVcOApBZSinVbsMzApBZ64+LCUBDbsv/fr/f5z5n0+n8Vu/exy+5/r9QATK413E/Te5Op9MpX4seE4CCDofD4dHfbh8hi3wVHBWs1+v1K+8HjHyP4CvMATJ61JG3Q0SJZ/8eMQRk9KgTrzv83mdKLh1VgAKeVYKaV/8wCEAxvx3XS28cGQI6pwIU9FMVqLFtrAIU1OJ9AQEobD6fz2u34ZoAFJZSSrvdble7HRfNlaRe1Ljxc48KUMk4juM0TdMw/P+3M7XbAwAAAAAAAAAAAAAAAAAAAAAAAEAT/gHKfwrZzqMX4QAAAABJRU5ErkJggg==";
+//1337 + 7 -> 1
+var imgString6 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAAyFJREFUeJzt3DGO6jAUhWFDKNJQUcEu6FgJFRViLeyBjYBYCFtgAUgUFIlf8YTEWCE4se+1A//XzSSTWOOb49iBGAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB8s8VisbDWWs1zWmvtbrfbaZ4Tb9gXGuc7nU6nmOcbxTjIL3vtiNFoJP7/dDs+9JzjsOZAk0TKUAAZuN1uN2utXa/Xa+1zMwQEijEE+Bzj3dXPEDBwbscWRVFonp8ECBR6U9Z0ZbvHaBv7SQAEoQAi63Kn7rOv9PoCBfDjKAABoVft8+997g9CUQBCLpfLpW17nyKRWGlkFhCo7x16SAHEXH4mAQK1deT9fr/7Hmc2m83atk+n02mXdvkiASLomgLu/o/H41GWZel7HBJgQOq6rj/tU5Zl2bZ9MplM4rXoLwpAWIwbt6qqqhhtaUIBKHiN7Lal46ZikX42QAFE4HOVj8djr/+1eyyfISQEBRDJpyLoEuPPY2l8wogCEHI4HA7u77o8+tXofGOYBkblTs8+LfZIfoDEFwkgZL/f733H/ZRIgIiqqqpeO70tBUKuXBIgU+6Ybq21WmN5XxSAAumpXAgKQEFRFMVqtVo9f44V/zFkHU9D9ewkifiP/c0gsYcMv2w+n8+NMeZ6vV6N+f8F0rQteo8EECSRBHw3cCDaHgDlhAIYsBjJQgEokUiBGMekAIRoLACRAJnLfRXQGApgUDabzSb2MbOv0KGLOW2LPQU0hgQQ53ZablNCCkBY7p8JyLpx36pPCkjEvzEUgIqcZwMUQCLn8/nsu+/xeDxKtSPbyvxGfWNcKv6NIQGSymFGQAEoWi6Xy9RtcDEEKOv62hfJ+DeGBFDX9FVv7ZdDviIBEvBNAXe/uq7r2MVCASTiE+3S8W8MQ0A23M7ebrfbVG2BEuto2ya1GMQQkNC7iNd4QeQTQ0BmtJ8bkACJ+bxTQLIoSICMpFgapgAyJz0kUAAZ0/g0EQWQMY0hgQLIlNZsgALIkOYbRZgGJqY97XORAJnRXgiiAIDUmh4GAQAAAAAAAAAAAAAAAAAAAAAAAAAAAMBf/wAXqZw/OOf9CwAAAABJRU5ErkJggg==";
+//1343 + 7 -> 1
+
+function sleep (time) {
+    time=200
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+predict(imgString1)
+sleep(1000).then(() => {
+    predict(imgString2)
+    sleep(1000).then(() => {
+    predict(imgString3)
+    sleep(1000).then(() => {
+    predict(imgString4)
+    sleep(1000).then(() => {
+    predict(imgString5)
+    sleep(1000).then(() => {
+    predict(imgString6)
+});
+});
+});
+});
+});
+
+
 </script>
 

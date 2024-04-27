@@ -1,0 +1,15 @@
+description: Ultralytics model model trained on training/data/data.yaml
+author: Ultralytics
+license: AGPL-3.0 https://ultralytics.com/license
+date: '2024-04-22T17:05:56.376467'
+version: 8.0.196
+stride: 32
+task: detect
+batch: 1
+imgsz:
+- 128
+- 128
+names:
+  0: lightning
+  1: fire
+  2: water
