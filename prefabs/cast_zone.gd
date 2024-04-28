@@ -18,8 +18,12 @@ var continue_drawing = false
 var x_scale: float
 var y_scale: float
 
+var training_file := "res://assets/training_data/training_data.tres"
+var image_data: TrainingData
+
 func _ready():
-	prep_image_data()
+	#image_data = load_dictionary_from_file(training_file)
+	image_data = ResourceLoader.load(training_file)
 	sub_viewport.size = capture_size
 	brush.hide()
 	update_viewport_scale()
@@ -35,31 +39,21 @@ func _input(event):
 		brush.hide()
 		send_drawing()
 
-var image_data = {}
-func prep_image_data():
-	var dir = DirAccess.open("res://assets/glyphs")
-	if dir:
-		dir.list_dir_begin()
-		var glyph_type = dir.get_next()
-		while glyph_type != "":
-			if dir.current_is_dir():
-				image_data[glyph_type] = []
-				var sub_dir = DirAccess.open("res://assets/glyphs/"+glyph_type)
-				if sub_dir:
-					sub_dir.list_dir_begin()
-					var file_name = sub_dir.get_next()
-					while file_name != "":
-						if not file_name.ends_with(".import"):
-							var base_img = Image.load_from_file("res://assets/glyphs/"+glyph_type+"/"+file_name)
-							base_img.resize(48,48)
-							base_img.convert(Image.FORMAT_RGB8)
-							var base_img_data = base_img.get_data()
-							image_data[glyph_type].append(base_img_data)
-						file_name = sub_dir.get_next()
-					file_name = sub_dir.get_next()
-			glyph_type = dir.get_next()
+func load_dictionary_from_file(file_path):
+	var file = FileAccess.open(file_path, FileAccess.READ)
+	if file != null:
+		var json_string = file.get_as_text()
+		var parsed_data = JSON.parse_string(json_string)
+		if parsed_data is Dictionary:
+			file.close()
+			return parsed_data
+		else:
+			print("Error: Parsed data is not a Dictionary.")
 	else:
-		print("An error occurred when trying to access the path.")
+		print("Error: Could not open file for reading: ", file_path)
+	
+	file.close()
+	return {}
 
 func send_drawing():
 	start_cast.emit()
@@ -76,8 +70,8 @@ func send_drawing():
 	# Calculate directly
 	var best_match = null
 	var best_match_score = 0
-	for glyph_type in image_data.keys():
-		for base_img_data in image_data[glyph_type]:
+	for glyph_type in image_data.data.keys():
+		for base_img_data in image_data.data[glyph_type]:
 			var total = 0
 			for i in range(0,len(base_img_data),3):
 				total += abs(drawn_image_data[i] - base_img_data[i])

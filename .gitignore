@@ -6,3 +6,9 @@ server/yolov8n.pt
 server/training/data
 server/new_data
 *.swp
+
+build/windows/*
+build/linux/*
+build/html/*
+build/*.zip
+

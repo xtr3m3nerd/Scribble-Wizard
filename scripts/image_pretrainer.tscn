@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dexhjjhesj3js"]
+
+[ext_resource type="Script" path="res://scripts/image_pretrainer.gd" id="1_wp0h7"]
+
+[node name="ImagePretrainer" type="Node"]
+script = ExtResource("1_wp0h7")
