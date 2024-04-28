@@ -10,6 +10,7 @@ extends CharacterBody3D
 @onready var game_manager : GameManager = get_tree().get_first_node_in_group("game_manager")
 
 var dead = false
+var wet = false
 
 func _ready():
 	hurtable.dead.connect(kill)
@@ -28,6 +29,12 @@ func kill():
 
 func take_damage(damage):
 	hurtable.take_damage(damage)
+
+func get_wet():
+	wet = true
+
+func is_wet():
+	return wet
 
 func on_animation_finished(anim_name):
 	match anim_name:

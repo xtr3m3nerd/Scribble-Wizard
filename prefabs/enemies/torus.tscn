@@ -6,8 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://c2rnbe2k1a7cc" path="res://prefabs/enemies/attacks/range_attack_manager.tscn" id="4_c3p6m"]
 [ext_resource type="PackedScene" uid="uid://beco7krhnq4iv" path="res://prefabs/casting_charge.tscn" id="4_mluw7"]
 [ext_resource type="PackedScene" uid="uid://cj13uvr8r1fd1" path="res://prefabs/projectile.tscn" id="5_ednya"]
-[ext_resource type="PackedScene" uid="uid://cuexqkfjtfmme" path="res://prefabs/enemies/behaviors/maintain_distance_behavior.tscn" id="7_5epqu"]
-[ext_resource type="PackedScene" uid="uid://cliimb2dvxmy0" path="res://prefabs/state_label.tscn" id="8_kgf7d"]
+[ext_resource type="PackedScene" path="res://prefabs/enemies/behaviors/maintain_distance_behavior.tscn" id="7_5epqu"]
+[ext_resource type="PackedScene" path="res://prefabs/state_label.tscn" id="8_kgf7d"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d8ioy"]
 
