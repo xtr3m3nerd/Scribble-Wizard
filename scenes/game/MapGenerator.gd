@@ -17,6 +17,7 @@ var spawn_count: Dictionary = {}
 
 var NOTHING = " "
 var WALL = "X"
+var GLYPH = "G"
 var FLOOR = "."
 var DOOR = "D"
 var CORNER = "Y"
@@ -71,6 +72,11 @@ func generate_level(p_level_data: DungeonLevel):
 				var wall = wall_prefab.instantiate()
 				add_child.call_deferred(wall)
 				wall.set_deferred("global_position", Vector3(x*wall_scale, 0, y*wall_scale))
+			if map[x][y] == GLYPH:
+				var wall = wall_prefab.instantiate()
+				add_child.call_deferred(wall)
+				wall.set_deferred("global_position", Vector3(x*wall_scale, 0, y*wall_scale))
+				wall.call_deferred("setGlyph", level_data.run_image)
 			if map[x][y] == PLAYER:
 				player.global_position = Vector3(x*wall_scale, 0, y*wall_scale)
 			if map[x][y].is_valid_int():
@@ -141,6 +147,12 @@ func room(is_player_room, is_last_room):
 			var y = rng.randf_range(position_y + 1, position_y + height - 1)
 			if map[x][y] == FLOOR:
 				map[x][y] = PLAYER
+				break
+		while true:
+			var x = rng.randf_range(position_x, position_x + width)
+			var y = rng.randf_range(position_y, position_y + height)
+			if map[x][y] == WALL:
+				map[x][y] = GLYPH
 				break
 	elif is_last_room:
 		while true:

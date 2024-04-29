@@ -1,17 +1,7 @@
 class_name DungeonLevel
 extends  Resource
 
-enum Rune {
-	NONE,
-	WATER,
-	LIGHTNING,
-	FIRE,
-	WATER_WITH_LIGHTNING,
-	PUSH,
-	TRAP
-}
-
-@export var shown_rune: Rune
+@export var run_image: CompressedTexture2D
 @export var total_room_count = 4
 
 @export var max_room_dim = 9

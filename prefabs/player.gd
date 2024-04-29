@@ -67,14 +67,14 @@ func _physics_process(delta):
 	if strafe_left_timer and strafe_left_timer.time_left > 0 and Input.is_action_just_pressed("move_left"):
 		is_strafing_left = true
 	elif Input.is_action_just_pressed("move_left"):
-		strafe_left_timer = get_tree().create_timer(0.5)
+		strafe_left_timer = get_tree().create_timer(0.2)
 	elif is_strafing_left and not Input.is_action_pressed("move_left"):
 		is_strafing_left = false
 		
 	if strafe_right_timer and strafe_right_timer.time_left > 0 and Input.is_action_just_pressed("move_right"):
 		is_strafing_right = true
 	elif Input.is_action_just_pressed("move_right"):
-		strafe_right_timer = get_tree().create_timer(0.5)
+		strafe_right_timer = get_tree().create_timer(0.2)
 	elif is_strafing_right and not Input.is_action_pressed("move_right"):
 		is_strafing_right = false
 	
@@ -175,9 +175,10 @@ func shoot(glyph_list):
 				projectile.global_position = projectile_spawn_point.global_position
 				projectile.global_basis = global_basis
 				projectile.damage = 0
-				projectile.move_speed = 100
+				projectile.move_speed = 50
 				projectile.wet = false
 				projectile.pushing_force = 3
+				projectile.scale = Vector3(3,3,0.5)
 			"trap":
 				var projectile = projectile_prefab.instantiate() as Projectile
 				projectile.add_collision_exception_with(self)
@@ -188,7 +189,9 @@ func shoot(glyph_list):
 				projectile.move_speed = 0
 				projectile.wet = false
 				projectile.pushing_force = 0
-				projectile.offset = Vector3(0, -1, 0)
+				projectile.offset = Vector3(0,0,1.6)
+				projectile.scale = Vector3(3,3,0.5)
+				projectile.rotation = Vector3(1.6,0,0)
 			_:
 				printerr("Glyph: %s is not currently supported" % glyph)
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://x4fkf8presxf"]
+[gd_scene load_steps=41 format=3 uid="uid://x4fkf8presxf"]
 
 [ext_resource type="PackedScene" uid="uid://d2bc2u6jj35ye" path="res://prefabs/player.tscn" id="1_cdwsg"]
 [ext_resource type="PackedScene" uid="uid://cbg4ymu14wy1b" path="res://scenes/game/game_manager.tscn" id="1_xi1cu"]
@@ -12,6 +12,12 @@
 [ext_resource type="PackedScene" uid="uid://cko6arxb16ach" path="res://prefabs/enemies/octohedron.tscn" id="5_o0ded"]
 [ext_resource type="PackedScene" uid="uid://3xuo2ywfijl2" path="res://prefabs/Stairs.tscn" id="6_i2c5g"]
 [ext_resource type="PackedScene" uid="uid://bbond388nk6lb" path="res://prefabs/enemies/torus.tscn" id="7_2o5be"]
+[ext_resource type="Texture2D" uid="uid://ce0pleq8jire0" path="res://assets/images/wall_guides/Water.png" id="7_43hn6"]
+[ext_resource type="Texture2D" uid="uid://d1jrn3ssoeoxh" path="res://assets/images/wall_guides/Lightning.png" id="7_egtho"]
+[ext_resource type="Texture2D" uid="uid://bdwvgxgu53pdu" path="res://assets/images/wall_guides/Fire.png" id="14_e75bl"]
+[ext_resource type="Texture2D" uid="uid://btx684b0qv1lu" path="res://assets/images/wall_guides/WaterThenLightning.png" id="16_4csvf"]
+[ext_resource type="Texture2D" uid="uid://cho6o2cloor7e" path="res://assets/images/wall_guides/Push.png" id="17_uplyp"]
+[ext_resource type="Texture2D" uid="uid://kk1hf703bfw8" path="res://assets/images/wall_guides/Trap.png" id="18_bkbr6"]
 
 [sub_resource type="Resource" id="Resource_yo7io"]
 script = ExtResource("4_484cb")
@@ -27,7 +33,7 @@ max_amt = -1
 
 [sub_resource type="Resource" id="Resource_sseep"]
 script = ExtResource("2_ox34g")
-shown_rune = 1
+run_image = ExtResource("7_43hn6")
 total_room_count = 4
 max_room_dim = 9
 min_room_dim = 4
@@ -55,7 +61,7 @@ max_amt = -1
 
 [sub_resource type="Resource" id="Resource_qymlr"]
 script = ExtResource("2_ox34g")
-shown_rune = 3
+run_image = ExtResource("7_egtho")
 total_room_count = 6
 max_room_dim = 10
 min_room_dim = 4
@@ -89,11 +95,11 @@ max_amt = -1
 
 [sub_resource type="Resource" id="Resource_7j80t"]
 script = ExtResource("2_ox34g")
-shown_rune = 2
+run_image = ExtResource("14_e75bl")
 total_room_count = 8
 max_room_dim = 11
 min_room_dim = 4
-max_enemies_per_room = 5
+max_enemies_per_room = 4
 min_enemies_per_room = 2
 spawn_table = Array[ExtResource("4_484cb")]([SubResource("Resource_8q315"), SubResource("Resource_3ybdn"), SubResource("Resource_5oooe"), SubResource("Resource_ig7r0")])
 
@@ -111,7 +117,7 @@ max_amt = -1
 
 [sub_resource type="Resource" id="Resource_h1lpg"]
 script = ExtResource("4_484cb")
-weight = 1.0
+weight = 3.0
 prefab = ExtResource("5_kfu7w")
 max_amt = -1
 
@@ -123,7 +129,7 @@ max_amt = -1
 
 [sub_resource type="Resource" id="Resource_naon4"]
 script = ExtResource("2_ox34g")
-shown_rune = 0
+run_image = ExtResource("16_4csvf")
 total_room_count = 9
 max_room_dim = 12
 min_room_dim = 7
@@ -133,12 +139,22 @@ spawn_table = Array[ExtResource("4_484cb")]([SubResource("Resource_tyjx0"), SubR
 
 [sub_resource type="Resource" id="Resource_yr4ii"]
 script = ExtResource("2_ox34g")
-shown_rune = 0
+run_image = ExtResource("17_uplyp")
 total_room_count = 15
 max_room_dim = 5
 min_room_dim = 3
 max_enemies_per_room = 3
 min_enemies_per_room = 2
+spawn_table = Array[ExtResource("4_484cb")]([SubResource("Resource_tyjx0"), SubResource("Resource_207hb"), SubResource("Resource_h1lpg"), SubResource("Resource_6x03l")])
+
+[sub_resource type="Resource" id="Resource_cvi0w"]
+script = ExtResource("2_ox34g")
+run_image = ExtResource("18_bkbr6")
+total_room_count = 6
+max_room_dim = 10
+min_room_dim = 8
+max_enemies_per_room = 12
+min_enemies_per_room = 8
 spawn_table = Array[ExtResource("4_484cb")]([SubResource("Resource_tyjx0"), SubResource("Resource_207hb"), SubResource("Resource_h1lpg"), SubResource("Resource_6x03l")])
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xonup"]
@@ -165,7 +181,7 @@ stairs_prefab = ExtResource("6_i2c5g")
 
 [node name="GameManager" parent="." node_paths=PackedStringArray("map_generator") instance=ExtResource("1_xi1cu")]
 map_generator = NodePath("../MapGenerator")
-levels = Array[ExtResource("2_ox34g")]([SubResource("Resource_sseep"), SubResource("Resource_qymlr"), SubResource("Resource_7j80t"), SubResource("Resource_naon4"), SubResource("Resource_yr4ii")])
+levels = Array[ExtResource("2_ox34g")]([SubResource("Resource_sseep"), SubResource("Resource_qymlr"), SubResource("Resource_7j80t"), SubResource("Resource_naon4"), SubResource("Resource_yr4ii"), SubResource("Resource_cvi0w")])
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_rfnse")
