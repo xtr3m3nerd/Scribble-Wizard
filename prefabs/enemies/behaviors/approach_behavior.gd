@@ -6,6 +6,8 @@ func check_for_transition():
 		change_state("DEAD")
 	
 	match current_state.state_name:
+		"STUNNED":
+			return
 		"IDLE":
 			chase_if_player_seen()
 		"ROAM":
@@ -26,3 +28,5 @@ func _on_state_roam_roam_timeout():
 func _on_state_chase_unseen_timeout():
 	change_state("IDLE")
 
+func _on_state_stunned_stunned_timeout():
+	change_state("IDLE")

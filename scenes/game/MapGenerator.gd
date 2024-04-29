@@ -49,7 +49,7 @@ func generate_level(p_level_data: DungeonLevel):
 		if tries % 100 == 0:
 			await get_tree().process_frame
 		# If we can't generate a map in 10000 tries, simply reset since the existing rooms are in a wierd position.
-		if tries > level_data.total_room_count * 10000:
+		if tries > level_data.total_room_count * 1000:
 			print("Failed to generate map")
 			clear_map()
 			current_room_count = 0
@@ -60,9 +60,9 @@ func generate_level(p_level_data: DungeonLevel):
 	for x in range(level_data.columns()):
 		for y in range(level_data.rows()):
 			if map[x][y] != NOTHING and map[x][y] != STAIRS:
-				var floor = floor_prefab.instantiate()
-				add_child.call_deferred(floor)
-				floor.set_deferred("global_position", Vector3(x*wall_scale, 0, y*wall_scale))
+				var floor_tile = floor_prefab.instantiate()
+				add_child.call_deferred(floor_tile)
+				floor_tile.set_deferred("global_position", Vector3(x*wall_scale, 0, y*wall_scale))
 			if map[x][y] == STAIRS:
 				var stairs = stairs_prefab.instantiate()
 				add_child.call_deferred(stairs)

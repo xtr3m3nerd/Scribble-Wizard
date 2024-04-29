@@ -8,6 +8,7 @@ extends CharacterBody3D
 
 @onready var player : CharacterBody3D = get_tree().get_first_node_in_group("player")
 @onready var game_manager : GameManager = get_tree().get_first_node_in_group("game_manager")
+@onready var behavior: Behavior = null
 
 var dead = false
 var wet = false
@@ -20,6 +21,9 @@ func _ready():
 	animation_player.play("idle", 0.5)
 	if game_manager:
 		hurtable.dead.connect(game_manager.add_kill)
+	for child in get_children():
+		if child.is_in_group("enemy_behaviors"):
+			behavior = child
 
 func kill():
 	dead = true
@@ -35,6 +39,11 @@ func get_wet():
 
 func is_wet():
 	return wet
+
+func get_pushed(force: float, direction: Vector3):
+	behavior.change_state("STUNNED")
+	velocity = direction*force
+	velocity.y = 0
 
 func on_animation_finished(anim_name):
 	match anim_name:

@@ -55,35 +55,92 @@ func load_dictionary_from_file(file_path):
 	file.close()
 	return {}
 
-func send_drawing():
-	start_cast.emit()
-	await RenderingServer.frame_post_draw
-	var image = sub_viewport.get_texture().get_image()
+func random_filename(length):
+	var characters = 'abcdefghijklmnopqrstuvwxyz'
+	var word: String = ""
+	for i in range(length):
+		word += characters[randi() % len(characters)]
+	return word
+
+func get_image_data(image):
 	var bounding_rect = image.get_used_rect()
 	var cropped = image.get_region(bounding_rect)
 	cropped.resize(48,48)
 	cropped.convert(Image.FORMAT_RGB8)
-	var buffer = cropped.save_png_to_buffer()
+	#cropped.save_png("res://assets/glyphs/new/" + random_filename(5) + ".png")
 	
 	var drawn_image_data = cropped.get_data()
+	return drawn_image_data
+
+func process_image_to_bitmap(drawn_image_data):
+	# This method should match the algorithm for bitmap processing in the pretrainer.
+	var drawn_bitmap = BitMap.new()
+	drawn_bitmap.create(Vector2i(48,48))
+	
+	for i in range(0,len(drawn_image_data),3):
+		if drawn_image_data[i] > 150:
+			var y = int((i/3.)/48.)
+			var x = int(i/3.)%48
+			drawn_bitmap.set_bit(x, y, true )
+	
+	drawn_bitmap.resize(Vector2i(256, 256))
+	
+	while drawn_bitmap.get_true_bit_count() > 20000:
+		drawn_bitmap.grow_mask(-1, Rect2(Vector2(), drawn_bitmap.get_size()))
+	while drawn_bitmap.get_true_bit_count() < 20000:
+		drawn_bitmap.grow_mask(1, Rect2(Vector2(), drawn_bitmap.get_size()))
+	
+	drawn_bitmap.resize(Vector2i(48, 48))
+	
+	var raw_bitmap_data = []
+	for x in range(0, 48):
+		for y in range(0, 48):
+			raw_bitmap_data.append(1 if drawn_bitmap.get_bit(x, y) else 0)
+			
+	return raw_bitmap_data
+	
+func send_drawing():
+	start_cast.emit()
+	await RenderingServer.frame_post_draw
+	var image = sub_viewport.get_texture().get_image()
+	if image.get_size().x == 0 or image.get_size().y == 0:
+		bad_cast.emit()
+		print("Bad Glyph")
+		clear()
+		return
+	
+	var drawn_bitmap_data = process_image_to_bitmap(get_image_data(image))
 	
 	# Calculate directly
-	var best_match = null
-	var best_match_score = 0
+	var best_match = {}
+	var best_match_score = {}
 	for glyph_type in image_data.data.keys():
-		for base_img_data in image_data.data[glyph_type]:
+		best_match[glyph_type] = null
+		best_match_score[glyph_type] = 0
+		
+		for base_img_bitmap_data in image_data.data[glyph_type]:
 			var total = 0
-			for i in range(0,len(base_img_data),3):
-				total += abs(drawn_image_data[i] - base_img_data[i])
-			if total > best_match_score:
-				best_match_score = total
-				best_match = glyph_type
-	if best_match_score > 450000:
-		cast.emit([best_match])
-		print(best_match + " " + str(best_match_score))
+			for i in range(0, 48*48):
+				total += 1 if base_img_bitmap_data[i] == drawn_bitmap_data[i] else -1
+			
+			if total > best_match_score[glyph_type]:
+				best_match_score[glyph_type] = total
+				best_match[glyph_type] = glyph_type
+	var matches = []
+	
+	#print(best_match_score)
+	#print(best_match)
+	
+	for glyph_type in image_data.data.keys():
+		if best_match_score[glyph_type] > 1200:
+			matches.append(glyph_type)
+	
+	if matches:
+		cast.emit(matches)
+		print(matches)
 	else:
 		bad_cast.emit()
-		print("Bad Glyph" + " "+ str(best_match_score))
+		print("Bad Glyph")
 	clear()
 
 func _process(_delta):

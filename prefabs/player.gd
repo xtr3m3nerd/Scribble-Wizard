@@ -54,31 +54,48 @@ func _process(_delta):
 	if dead:
 		return
 
+var strafe_left_timer: SceneTreeTimer = null
+var is_strafing_left = false
+var strafe_right_timer: SceneTreeTimer = null
+var is_strafing_right = false
+
 func _physics_process(delta):
 	if dead:
 		return
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forwards", "move_backwards")
-	var is_holding = Input.is_action_pressed("hold")
-	if not is_holding:
-		rotation_degrees.y -= input_dir.x * TURN_SPEED * delta
-		var direction = (transform.basis * Vector3(0, 0, input_dir.y)).normalized()
-		if direction:
+	
+	if strafe_left_timer and strafe_left_timer.time_left > 0 and Input.is_action_just_pressed("move_left"):
+		is_strafing_left = true
+	elif Input.is_action_just_pressed("move_left"):
+		strafe_left_timer = get_tree().create_timer(0.5)
+	elif is_strafing_left and not Input.is_action_pressed("move_left"):
+		is_strafing_left = false
+		
+	if strafe_right_timer and strafe_right_timer.time_left > 0 and Input.is_action_just_pressed("move_right"):
+		is_strafing_right = true
+	elif Input.is_action_just_pressed("move_right"):
+		strafe_right_timer = get_tree().create_timer(0.5)
+	elif is_strafing_right and not Input.is_action_pressed("move_right"):
+		is_strafing_right = false
+	
+	if input_dir:
+		if is_strafing_left:
+			var dir = (transform.basis * Vector3(-1, -1, 0)).normalized()
+			velocity.x = dir.x * SPEED
+			velocity.z = dir.z * SPEED
+		elif is_strafing_right:
+			var dir = (transform.basis * Vector3(1, 1, 0)).normalized()
+			velocity.x =  dir.x * SPEED
+			velocity.z = dir.z * SPEED
+		else:
+			rotation_degrees.y -= input_dir.x * TURN_SPEED * delta
+			var direction = (transform.basis * Vector3(0, 0, input_dir.y)).normalized()
 			velocity.x = direction.x * SPEED
 			velocity.z = direction.z * SPEED
-		else:
-			velocity.x = move_toward(velocity.x, 0, SPEED)
-			velocity.z = move_toward(velocity.z, 0, SPEED)
-		move_and_slide()
 	else:
-		var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-		if direction:
-			velocity.x = direction.x * SPEED
-			velocity.z = direction.z * SPEED
-		else:
-			velocity.x = move_toward(velocity.x, 0, SPEED)
-			velocity.z = move_toward(velocity.z, 0, SPEED)
-		move_and_slide()
-
+		velocity.x = move_toward(velocity.x, 0, SPEED)
+		velocity.z = move_toward(velocity.z, 0, SPEED)
+	move_and_slide()
 
 func restart():
 	get_tree().reload_current_scene()
@@ -123,12 +140,12 @@ func shoot(glyph_list):
 											closest_enemy = enemy
 											closest_distance = distance_to_enemy
 							if closest_enemy != null:
-								var lightning: Lightning = lightning_prefab.instantiate()
-								get_tree().current_scene.add_child(lightning)
-								lightning.global_position = closest_enemy.collision_shape_3d.global_position
-								lightning.look_at(already_hit_targets[-1].collision_shape_3d.global_position)
-								lightning.scale = Vector3(1,1,closest_distance/2)
-								lightning.rotation_degrees.z = RandomNumberGenerator.new().randf_range(0, 360)
+								var chain_lightning: Lightning = lightning_prefab.instantiate()
+								get_tree().current_scene.add_child(chain_lightning)
+								chain_lightning.global_position = closest_enemy.collision_shape_3d.global_position
+								chain_lightning.look_at(already_hit_targets[-1].collision_shape_3d.global_position)
+								chain_lightning.scale = Vector3(1,1,closest_distance/2)
+								chain_lightning.rotation_degrees.z = RandomNumberGenerator.new().randf_range(0, 360)
 								already_hit_targets.append(closest_enemy)
 					print(len(already_hit_targets))
 					for already_hit_target in already_hit_targets:
@@ -151,6 +168,27 @@ func shoot(glyph_list):
 				get_tree().current_scene.add_child(projectile)
 				projectile.global_position = projectile_spawn_point.global_position
 				projectile.global_basis = global_basis
+			"push":
+				var projectile = projectile_prefab.instantiate() as Projectile
+				projectile.add_collision_exception_with(self)
+				get_tree().current_scene.add_child(projectile)
+				projectile.global_position = projectile_spawn_point.global_position
+				projectile.global_basis = global_basis
+				projectile.damage = 0
+				projectile.move_speed = 100
+				projectile.wet = false
+				projectile.pushing_force = 3
+			"trap":
+				var projectile = projectile_prefab.instantiate() as Projectile
+				projectile.add_collision_exception_with(self)
+				get_tree().current_scene.add_child(projectile)
+				projectile.global_position = projectile_spawn_point.global_position
+				projectile.global_basis = global_basis
+				projectile.damage = 5
+				projectile.move_speed = 0
+				projectile.wet = false
+				projectile.pushing_force = 0
+				projectile.offset = Vector3(0, -1, 0)
 			_:
 				printerr("Glyph: %s is not currently supported" % glyph)
 

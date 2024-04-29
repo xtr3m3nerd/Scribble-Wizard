@@ -13,4 +13,5 @@ extends ProgressBar
 			update_health(0,1)
 
 func update_health(current_health: int, max_health: int):
-	value = 100*current_health/max_health
+	#warning-ignore:integer_division
+	value = 100*current_health/float(max_health)

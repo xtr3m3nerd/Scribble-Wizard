@@ -9,6 +9,8 @@ func check_for_transition():
 		change_state("DEAD")
 	
 	match current_state.state_name:
+		"STUNNED":
+			return
 		"IDLE":
 			maintain_dist()
 		"ROAM":
@@ -42,3 +44,7 @@ func _on_state_chase_unseen_timeout():
 
 func _on_state_run_away_unseen_timeout():
 	change_state("IDLE")
+
+
+func _on_state_stunned_stunned_timeout():
+	change_state("IDLE") # Replace with function body.

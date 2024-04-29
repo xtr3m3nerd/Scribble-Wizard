@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://x4fkf8presxf"]
+[gd_scene load_steps=34 format=3 uid="uid://x4fkf8presxf"]
 
 [ext_resource type="PackedScene" uid="uid://d2bc2u6jj35ye" path="res://prefabs/player.tscn" id="1_cdwsg"]
 [ext_resource type="PackedScene" uid="uid://cbg4ymu14wy1b" path="res://scenes/game/game_manager.tscn" id="1_xi1cu"]
@@ -97,6 +97,50 @@ max_enemies_per_room = 5
 min_enemies_per_room = 2
 spawn_table = Array[ExtResource("4_484cb")]([SubResource("Resource_8q315"), SubResource("Resource_3ybdn"), SubResource("Resource_5oooe"), SubResource("Resource_ig7r0")])
 
+[sub_resource type="Resource" id="Resource_tyjx0"]
+script = ExtResource("4_484cb")
+weight = 1.0
+prefab = ExtResource("3_454d3")
+max_amt = -1
+
+[sub_resource type="Resource" id="Resource_207hb"]
+script = ExtResource("4_484cb")
+weight = 1.0
+prefab = ExtResource("7_2o5be")
+max_amt = -1
+
+[sub_resource type="Resource" id="Resource_h1lpg"]
+script = ExtResource("4_484cb")
+weight = 1.0
+prefab = ExtResource("5_kfu7w")
+max_amt = -1
+
+[sub_resource type="Resource" id="Resource_6x03l"]
+script = ExtResource("4_484cb")
+weight = 1.0
+prefab = ExtResource("5_o0ded")
+max_amt = -1
+
+[sub_resource type="Resource" id="Resource_naon4"]
+script = ExtResource("2_ox34g")
+shown_rune = 0
+total_room_count = 9
+max_room_dim = 12
+min_room_dim = 7
+max_enemies_per_room = 7
+min_enemies_per_room = 4
+spawn_table = Array[ExtResource("4_484cb")]([SubResource("Resource_tyjx0"), SubResource("Resource_207hb"), SubResource("Resource_h1lpg"), SubResource("Resource_6x03l")])
+
+[sub_resource type="Resource" id="Resource_yr4ii"]
+script = ExtResource("2_ox34g")
+shown_rune = 0
+total_room_count = 15
+max_room_dim = 5
+min_room_dim = 3
+max_enemies_per_room = 3
+min_enemies_per_room = 2
+spawn_table = Array[ExtResource("4_484cb")]([SubResource("Resource_tyjx0"), SubResource("Resource_207hb"), SubResource("Resource_h1lpg"), SubResource("Resource_6x03l")])
+
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xonup"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
 ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -121,7 +165,7 @@ stairs_prefab = ExtResource("6_i2c5g")
 
 [node name="GameManager" parent="." node_paths=PackedStringArray("map_generator") instance=ExtResource("1_xi1cu")]
 map_generator = NodePath("../MapGenerator")
-levels = Array[ExtResource("2_ox34g")]([SubResource("Resource_sseep"), SubResource("Resource_qymlr"), SubResource("Resource_7j80t")])
+levels = Array[ExtResource("2_ox34g")]([SubResource("Resource_sseep"), SubResource("Resource_qymlr"), SubResource("Resource_7j80t"), SubResource("Resource_naon4"), SubResource("Resource_yr4ii")])
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_rfnse")

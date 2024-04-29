@@ -6,6 +6,9 @@ enum Rune {
 	WATER,
 	LIGHTNING,
 	FIRE,
+	WATER_WITH_LIGHTNING,
+	PUSH,
+	TRAP
 }
 
 @export var shown_rune: Rune

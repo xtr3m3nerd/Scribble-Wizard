@@ -5,8 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://b10mevdllbqgv" path="res://prefabs/health_bar_3d.tscn" id="3_t0fiv"]
 [ext_resource type="PackedScene" uid="uid://0od5q0qphe8u" path="res://assets/imported_models/pyramid.tscn" id="4_rurm2"]
 [ext_resource type="Script" path="res://prefabs/enemies/attacks/melee_attack_manager.gd" id="5_hvk6j"]
-[ext_resource type="PackedScene" uid="uid://d0emu1ha0s4rg" path="res://prefabs/enemies/behaviors/approach_behavior.tscn" id="7_fpmds"]
-[ext_resource type="PackedScene" uid="uid://cliimb2dvxmy0" path="res://prefabs/state_label.tscn" id="8_gstt8"]
+[ext_resource type="PackedScene" uid="uid://02sv4vtoqg3q" path="res://prefabs/enemies/behaviors/approach_behavior.tscn" id="7_fpmds"]
+[ext_resource type="PackedScene" path="res://prefabs/state_label.tscn" id="8_gstt8"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_64kr8"]
 radius = 0.75

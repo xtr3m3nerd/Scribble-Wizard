@@ -26,6 +26,37 @@ static func image_load_no_warning(filepath):
 	image.load(ProjectSettings.globalize_path(filepath))
 	return image
 
+func process_image_to_bitmap_data(base_img):
+	# This method should match the algorithm for bitmap processing in the Cast Zone
+	base_img.resize(48,48)
+	base_img.convert(Image.FORMAT_RGB8)
+	var base_img_data = base_img.get_data()
+	
+	var drawn_bitmap = BitMap.new()
+	drawn_bitmap.create(Vector2i(48,48))
+	
+	for i in range(0,len(base_img_data),3):
+		if base_img_data[i] > 150:
+			var y = int((i/3.)/48.)
+			var x = int(i/3.)%48
+			drawn_bitmap.set_bit(x, y, true )
+	
+	drawn_bitmap.resize(Vector2i(256, 256))
+	
+	# This gives us a roughly equal number of pixels across all glyphs, allowing us to use one threshold value.
+	while drawn_bitmap.get_true_bit_count() > 20000:
+		drawn_bitmap.grow_mask(-1, Rect2(Vector2(), drawn_bitmap.get_size()))
+	while drawn_bitmap.get_true_bit_count() < 20000:
+		drawn_bitmap.grow_mask(1, Rect2(Vector2(), drawn_bitmap.get_size()))
+	
+	drawn_bitmap.resize(Vector2i(48, 48))
+	
+	var raw_bitmap_data = []
+	for x in range(0, 48):
+		for y in range(0, 48):
+			raw_bitmap_data.append(1 if drawn_bitmap.get_bit(x, y) else 0)
+	return raw_bitmap_data
+
 func prep_image_data() -> TrainingData:
 	var image_data = TrainingData.new()
 	print("LOAD IMAGES")
@@ -49,12 +80,10 @@ func prep_image_data() -> TrainingData:
 						if not file_name.ends_with(".import"):
 							print(file_name)
 							var base_img = image_load_no_warning(image_directory+"/"+glyph_type+"/"+file_name)
-							base_img.resize(48,48)
-							base_img.convert(Image.FORMAT_RGB8)
-							var base_img_data = base_img.get_data()
+							var raw_bitmap_data = process_image_to_bitmap_data(base_img)
 							count += 1
 							print(count)
-							image_data.data[glyph_type].append(base_img_data)
+							image_data.data[glyph_type].append(raw_bitmap_data)
 						file_name = sub_dir.get_next()
 						print(file_name)
 					file_name = sub_dir.get_next()

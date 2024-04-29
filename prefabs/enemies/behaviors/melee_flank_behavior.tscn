@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://b4jfubv53f557"]
+[gd_scene load_steps=8 format=3 uid="uid://b4jfubv53f557"]
 
 [ext_resource type="Script" path="res://prefabs/enemies/behaviors/melee_flank_behavior.gd" id="1_7cn11"]
 [ext_resource type="Script" path="res://prefabs/enemies/states/state_idle.gd" id="2_npyrx"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://prefabs/enemies/states/state_flank.gd" id="4_qeiap"]
 [ext_resource type="Script" path="res://prefabs/enemies/states/state_chase.gd" id="4_sjk8f"]
 [ext_resource type="Script" path="res://prefabs/enemies/states/state_dead.gd" id="6_fvo8i"]
+[ext_resource type="Script" path="res://prefabs/enemies/behaviors/StateStunned.gd" id="7_dsame"]
 
 [node name="MeleeFlankBehavior" type="Node"]
 script = ExtResource("1_7cn11")
@@ -30,8 +31,13 @@ state_name = "CHASE"
 script = ExtResource("6_fvo8i")
 state_name = "DEAD"
 
+[node name="StateStunned" type="Node" parent="."]
+script = ExtResource("7_dsame")
+state_name = "STUNNED"
+
 [connection signal="idle_timeout" from="StateIdle" to="." method="_on_state_idle_idle_timeout"]
 [connection signal="roam_timeout" from="StateRoam" to="." method="_on_state_roam_roam_timeout"]
 [connection signal="flank_timeout" from="StateFlank" to="." method="_on_state_flank_flank_timeout"]
 [connection signal="unseen_timeout" from="StateFlank" to="." method="_on_state_flank_unseen_timeout"]
 [connection signal="unseen_timeout" from="StateChase" to="." method="_on_state_chase_unseen_timeout"]
+[connection signal="stunned_timeout" from="StateStunned" to="." method="_on_state_stunned_stunned_timeout"]
